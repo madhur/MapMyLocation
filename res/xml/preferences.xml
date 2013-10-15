@@ -17,7 +17,7 @@
             <CheckBoxPreference android:key="pref_onlyallowcontacts" android:defaultValue="true" android:title="@string/pref_onlyallowcontacts" android:summary="@string/pref_onlyallowcontacts_desc"></CheckBoxPreference>
             <Preference android:key="pref_selectcontacts" android:title="@string/pref_selectcontacts" android:summary="@string/pref_selectcontacts_desc"/>
             <ListPreference android:entries="@array/pref_max_rate" android:defaultValue="30" android:key="pref_max_rate" android:entryValues="@array/pref_max_rate_values" android:title="@string/pref_max_rate" android:summary="@string/pref_max_rate_desc"></ListPreference> 
-                
+            <CheckBoxPreference android:key="pref_trackme_shownotification" android:title="@string/pref_trackme_shownotification" android:summary="@string/pref_trackme_shownotification_desc" android:defaultValue="true"/>    
         </PreferenceScreen>
     </PreferenceCategory>
     <PreferenceCategory
@@ -35,13 +35,16 @@
             <ListPreference android:key="pref_fbinterval" android:defaultValue="30" android:entries="@array/pref_fbinterval" android:entryValues="@array/pref_fbinterval_values" android:title="@string/pref_fbinterval" android:summary="@string/pref_fbintervald_desc"/>
             <Preference android:key="pref_selectfbfriends" android:title="@string/pref_selectfbfriends" android:summary="@string/pref_selectfbfriends_desc"/>
             <EditTextPreference android:key="pref_fbmessage" android:title="@string/pref_fbmessage" android:summary="@string/pref_fbmessage_desc"/>
-            
+            <CheckBoxPreference android:key="pref_livetrack_shownotification" android:title="@string/pref_livetrack_shownotification" android:summary="@string/pref_livetrack_shownotification_desc" android:defaultValue="true"/>
         </PreferenceScreen>
     </PreferenceCategory>
     <PreferenceCategory
         android:summary="@string/pref_category_other_desc"
         android:title="@string/pref_category_other" >
         
+         <Preference android:key="pref_shareloc"
+            android:summary="@string/pref_shareloc_desc"
+            android:title="@string/pref_shareloc" />
         <Preference android:key="pref_about_desc"
             android:summary="@string/pref_about_desc"
             android:title="@string/pref_about" />

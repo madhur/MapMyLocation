@@ -42,5 +42,11 @@
     <string name="pref_selectfbfriends_desc">Select facebook friends to whom your location will be visible</string>
     <string name="pref_fbmessage">Set Default message</string>
     <string name="pref_fbmessage_desc">Set default message to be included with your facebook post</string>
+    <string name="pref_trackme_shownotification">Show notification</string>
+    <string name="pref_trackme_shownotification_desc">Notification will be displayed when location update is fired through SMS</string>
+    <string name="pref_livetrack_shownotification">Show notification</string>
+    <string name="pref_livetrack_shownotification_desc">Notification will be displayed whenever location is posted on your timeline</string>
+    <string name="pref_shareloc">Share location</string>
+    <string name="pref_shareloc_desc">Share location instantly to your friends</string>
 
 </resources>
