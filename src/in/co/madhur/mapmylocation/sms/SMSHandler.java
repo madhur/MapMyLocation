@@ -1,10 +1,14 @@
 package in.co.madhur.mapmylocation.sms;
 
 import in.co.madhur.mapmylocation.App;
+import in.co.madhur.mapmylocation.location.Coordinates;
+import in.co.madhur.mapmylocation.location.LocationGetter;
 import in.co.madhur.mapmylocation.preferences.Preferences;
+import in.co.madhur.mapmylocation.tasks.LocationTask;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.ContactsContract.PhoneLookup;
 import android.util.Log;
 
@@ -12,9 +16,10 @@ public class SMSHandler
 {
 	static Preferences appPreferences;
 
-	public static void HandleIncomingSMS(Context context, String message, String sender)
+	public static void HandleIncomingSMS(Context context, String message, String sender, long timeStamp)
 	{
 		appPreferences=new Preferences(context);
+		boolean showNotification;
 		
 		if(!appPreferences.isTrackMeEnabled())
 		{
@@ -32,30 +37,25 @@ public class SMSHandler
 			}			
 		}
 		
-		String secretCode=appPreferences.getSecretCode();
-		if(secretCode.isEmpty())
-		{
-			Log.e(App.TAG, "Secret code is empty, returning");
-			return;
-		}
+		showNotification=appPreferences.showTrackMeNotifications();
 		
-		if(!message.startsWith(secretCode))
-		{
-			Log.v(App.TAG, "Message does not start with secret code");
-			return;
-			
-		}
-		
-		// All conditions passed
-		
-		ReplyToMessage(context, sender);
+		ReplyToMessage(context, sender, showNotification, timeStamp);
 		
 	}
 	
 	
-	private static void ReplyToMessage(Context context, String sender)
+	private static void ReplyToMessage(Context context, String sender, boolean showNotification, long timeStamp)
 	{
-		
+		try
+		{
+			
+			new LocationTask(context, showNotification, sender, timeStamp).execute(0);
+		}
+		catch(Exception e)
+		{
+			
+			Log.e(App.TAG, e.getMessage());
+		}
 		
 	}
 
@@ -80,5 +80,8 @@ public class SMSHandler
 		}
 		return false;
 	}
+	
+	
+
 	
 }

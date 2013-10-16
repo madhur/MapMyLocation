@@ -1,177 +1,127 @@
 package in.co.madhur.mapmylocation.location;
 
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import in.co.madhur.mapmylocation.App;
-import in.co.madhur.mapmylocation.Consts;
+
 import android.content.Context;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.AsyncTask;
-import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 
-public class LocationGetter 
+public class LocationGetter
 {
-	LocationManager lm;
-	Context context;
-	Location bestLocation, lastknownGPS, lastknownNetwork, locGPS, locNetwork; 
-	Date locTime;
-	Timer t;
+	private final Context context;
+	private Location location = null;
+	private final Object gotLocationLock = new Object();
+	private Coordinates coordinates;
+	private final LocationResult locationResult = new LocationResultChild();
 	
+
 	public LocationGetter(Context context)
 	{
-		this.context=context;
-		lm=(LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+		if (context == null)
+			throw new IllegalArgumentException("context == null");
+
+		this.context = context;
 	}
-	
-	public Location GetLocation(Location location, String provider)
+
+	public synchronized Coordinates getLocation(int maxWaitingTime, int updateTimeout)
 	{
-		
-		
-		if(!lm.isProviderEnabled(LocationManager.GPS_PROVIDER) || !lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER) )
+		try
 		{
-			Log.v(App.TAG, "No provider is enabled");
-			return null;
-		}
-		
-		if(lm.isProviderEnabled(LocationManager.GPS_PROVIDER))
-			lm.requestSingleUpdate(LocationManager.GPS_PROVIDER, new GPSListener(), null);
-				
-		if(lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER))
-			lm.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, new NetworkListener(), null);
-		
-		
-		t=new Timer();
-		
-		t.schedule(new TimerTask()
-		{
+
+			Log.v("Tag", "Main Thread Name: " + Thread.currentThread().getName()
+					+ "Thread ID: " + Thread.currentThread().getId());
 			
-			@Override
-			public void run()
+			final int updateTimeoutPar = updateTimeout;
+			synchronized (gotLocationLock)
 			{
-				if(locNetwork!=null)
+				new Thread()
 				{
-					bestLocation=locNetwork;
-					return;
-					
-				}
-				if(locGPS!=null)
-				{
-					bestLocation=locGPS;
-					return;
-					
-				}
-				
-				lastknownGPS=lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-				lastknownNetwork=lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-				
-				if(lastknownGPS!=null && lastknownNetwork!=null)
-				{
-					bestLocation=GetBestLocation(lastknownGPS, lastknownNetwork);
-					return;
-				}
-				
-				if(lastknownGPS!=null)
-				{
-					bestLocation=lastknownGPS;
-					return;
-				}
-				
-				if(lastknownNetwork!=null)
-				{
-					bestLocation=lastknownNetwork;
-					return;
-				}
-				
+					public void run()
+					{
+						
+						Log.v("Tag", "Thread Name: " + Thread.currentThread().getName()
+								+ "Thread ID: " + Thread.currentThread().getId());
+
+						Log.v("Tag", "Creating looper");
+						
+						
+						Looper.prepare();
+						LocationResolver locationResolver = new LocationResolver();
+						locationResolver.prepare();
+						locationResolver.getLocation(context, locationResult, updateTimeoutPar);
+						Looper.loop();
+					}
+				}.start();
+
+				gotLocationLock.wait(maxWaitingTime);
 			}
-		}, System.currentTimeMillis(), Consts.GPS_FIX_TIME);
-		
-		
-		return bestLocation;
-	}
-	
-	private Location GetBestLocation(Location locGPS, Location locNetwork)
-	{
-		if(locGPS.getTime() > locNetwork.getTime())
-			return locGPS;
+		}
+		catch (InterruptedException e1)
+		{
+			e1.printStackTrace();
+		}
+
+		if (location != null)
+			coordinates = new Coordinates(location.getLatitude(), location.getLongitude());
 		else
-			return locNetwork;
-	}
-
-	private class GPSListener implements LocationListener
-	{
-
-		@Override
-		public void onLocationChanged(Location location)
-		{
-			locGPS=location;
-			
-			
-			
-		}
-
-		@Override
-		public void onProviderDisabled(String provider)
-		{
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onProviderEnabled(String provider)
-		{
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onStatusChanged(String provider, int status, Bundle extras)
-		{
-			// TODO Auto-generated method stub
-			
-		}
-		
-		
+			coordinates = Coordinates.UNDEFINED;
+		return coordinates;
 	}
 	
-	private class NetworkListener implements LocationListener
+	public class LocationResultChild extends LocationResult
 	{
 
 		@Override
-		public void onLocationChanged(Location location)
+		public void gotLocation(Location location)
 		{
-			locNetwork=location;
 			
+				synchronized (gotLocationLock)
+				{
+					LocationGetter.this.location = location;
+					gotLocationLock.notifyAll();
+					Looper.myLooper().quit();
+				}
 			
+
 		}
 
-		@Override
-		public void onProviderDisabled(String provider)
-		{
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onProviderEnabled(String provider)
-		{
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void onStatusChanged(String provider, int status, Bundle extras)
-		{
-			// TODO Auto-generated method stub
-			
-		}
-		
-		
-		
 	}
 
+	
+	public boolean isProvidersEnabled()
+	{
+		LocationManager locationManager=(LocationManager) context.getSystemService(context.LOCATION_SERVICE);
+		boolean gpsProvider = false, networkProvider = false;
+		try
+		{
+			gpsProvider = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+		}
+		catch (Exception ex1)
+		{
+			Log.v("Tag", "Provider not permitted");
+		}
+		try
+		{
+			networkProvider = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+		}
+		catch (Exception ex)
+		{
+			Log.v("Tag", "Provider not permitted");
+		}
+
+		// don't start listeners if no provider is enabled
+		if (!gpsProvider && !networkProvider)
+		{
+			Log.v("Tag", "No Provider is enabled");
+			return false;
+			
+		}
+		
+		return true;
+	}
+	
+	
+	
 }

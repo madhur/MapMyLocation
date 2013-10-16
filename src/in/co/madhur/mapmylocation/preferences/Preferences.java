@@ -26,7 +26,9 @@ public final class Preferences
 		SELECT_FB_FRIENDS("pref_selectfbfriends"),
 		FB_MESSAGE("pref_fbmessage"),
 		ABOUT("pref_about_desc"),
-		FAQ("pref_faq_desc");
+		FAQ("pref_faq_desc"),
+		SHOW_TRACKME_NOTIFICATION("pref_trackme_shownotification"),
+		SHOW_LIVETRACK_NOTIFICATION("pref_livetrack_shownotification");
 		
 		public final String key;
 		private Keys(String key)
@@ -40,7 +42,7 @@ public final class Preferences
 	
 	public Preferences(Context context)
 	{
-		this.context=context.getApplicationContext();
+		this.context=context;
 		this.sharedPreferences=PreferenceManager.getDefaultSharedPreferences(context);
 		
 	}
@@ -93,6 +95,22 @@ public final class Preferences
 		return sharedPreferences.getBoolean(Keys.ALLOW_CONTACTS.key, false);
 		
 	}
+	
+	public boolean showLiveTrackNotifications()
+	{
+		return sharedPreferences.getBoolean(Keys.SHOW_LIVETRACK_NOTIFICATION.key, true);
+		
+	}
+	
+	public boolean showTrackMeNotifications()
+	{
+		return sharedPreferences.getBoolean(Keys.SHOW_TRACKME_NOTIFICATION.key, true);
+		
+	}
+	
+	
+	
+	
 
 
 

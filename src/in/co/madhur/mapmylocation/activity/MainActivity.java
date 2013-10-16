@@ -6,15 +6,22 @@ import in.co.madhur.mapmylocation.preferences.Preferences;
 import in.co.madhur.mapmylocation.preferences.Preferences.Keys.*;
 import java.util.List;
 
-
-
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
+import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.webkit.WebView;
 
 
 public class MainActivity extends PreferenceActivity
@@ -34,17 +41,10 @@ public class MainActivity extends PreferenceActivity
 		UpdateFBIntervalLabel(null);
 		UpdateMaxRateLabel(null);
 		
-		//getSherlock().getActionBar().show();
+		
 	}
 	
-	@Override
-	public void onBuildHeaders(List<Header> target)
-	{
-		// TODO Auto-generated method stub
-		super.onBuildHeaders(target);
-		
-		// loadHeadersFromResource(R.xml.headers, target);
-	}
+	
 	
 
 	@Override
@@ -54,6 +54,64 @@ public class MainActivity extends PreferenceActivity
 		getMenuInflater().inflate(R.menu.main, (android.view.Menu) menu);
 		
 		return true;
+	}
+	
+	@Override
+	@Deprecated
+	protected Dialog onCreateDialog(final int id)
+	{
+		switch(Dialogs.values()[id])
+		{
+		case NO_PROVIDER_ENABLED:
+			return new AlertDialog.Builder(this).setMessage(R.string.location_error_desc).setTitle(R.string.location_error).setNeutralButton("Go to Settings", new OnClickListener()
+			{
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+					dismissDialog(id);
+					
+				}
+			}).setPositiveButton("OK", new OnClickListener()
+			{
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					dismissDialog(id);
+					
+				}
+			}).create();
+			
+		case ABOUT_DIALOG:
+			View v=getLayoutInflater().inflate(R.layout.about_content, null);
+			WebView webView=(WebView) v.findViewById(R.id.about_content);
+			
+			webView.loadUrl("file:///android_asset/about.html");
+			
+			return new AlertDialog.Builder(this).setPositiveButton(android.R.string.ok, null).setView(v).create();
+			
+		default:
+			return null;
+		}
+	}
+	
+	public void show(Dialogs d)
+	{
+		showDialog(d.ordinal());
+	}
+
+	public void dismiss(Dialogs d)
+	{
+		try
+		{
+			dismissDialog(d.ordinal());
+		}
+		catch (IllegalArgumentException e)
+		{
+			// ignore
+		}
 	}
 	
 	
@@ -189,6 +247,18 @@ public class MainActivity extends PreferenceActivity
 				
 				return true;
 					
+			}
+		});
+		
+		findPreference(Preferences.Keys.ABOUT.key).setOnPreferenceClickListener(new OnPreferenceClickListener()
+		{
+			
+			@Override
+			public boolean onPreferenceClick(Preference preference)
+			{
+				show(Dialogs.ABOUT_DIALOG);
+				return true;
+				
 			}
 		});
 	}
