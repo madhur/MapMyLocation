@@ -49,8 +49,9 @@
     <string name="pref_shareloc">Share location</string>
     <string name="pref_shareloc_desc">Share location instantly to your friends</string>
     
-    <string name="noti_loc_request">Location request from </string>
-    <string name="noti_loc_response">Location sent to  </string>
+    <string name="noti_loc_request">Location requested</string>
+    <string name="noti_loc_response">Location sent</string>
+    <string name="noti_loc_failure">Could not obtain location</string>
     
     <string name="location_error">Location not enabled</string>
 	<string name="location_error_desc">Enable access to your location in the \'Location Access\' settings of your phone. At least one of th etwo options (\'GPS Satellites\' and \'WIFI\' and mobile network location\') must be enabled</string>

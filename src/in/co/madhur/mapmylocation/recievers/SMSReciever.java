@@ -22,7 +22,7 @@ public class SMSReciever extends BroadcastReceiver
 	{
 		Bundle data=intent.getExtras();
 		SmsMessage []messages=null;
-		String sender = "", dispSender, dispMessage = "";
+		String sender = "", dispSender = "", dispMessage = "";
 		String message = "";
 		appPreferences=new Preferences(context);
 		long timeStamp = 0;
@@ -46,7 +46,7 @@ public class SMSReciever extends BroadcastReceiver
 				message=message+messages[i].getMessageBody();
 				Log.v(App.TAG,message);
 				dispMessage=dispMessage+messages[i].getDisplayMessageBody();
-				timeStamp=messages[i].getTimestampMillis();
+				
 				
 				if(!message.equalsIgnoreCase(appPreferences.getSecretCode()))
 					return;
@@ -58,7 +58,7 @@ public class SMSReciever extends BroadcastReceiver
 				}
 			}
 			
-			SMSHandler.HandleIncomingSMS(context, message, sender, timeStamp);
+			SMSHandler.HandleIncomingSMS(context, message, sender);
 		}
 		
 	}
