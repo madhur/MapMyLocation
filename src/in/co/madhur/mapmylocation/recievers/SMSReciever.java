@@ -3,6 +3,7 @@ package in.co.madhur.mapmylocation.recievers;
 import in.co.madhur.mapmylocation.App;
 import in.co.madhur.mapmylocation.preferences.Preferences;
 import in.co.madhur.mapmylocation.sms.SMSHandler;
+import in.co.madhur.mapmylocation.util.AppLog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -11,7 +12,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.PhoneLookup;
 import android.telephony.SmsMessage;
+import android.text.format.DateFormat;
 import android.util.Log;
+
+import static in.co.madhur.mapmylocation.App.LOG;
+import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
+import static in.co.madhur.mapmylocation.App.TAG;
 
 public class SMSReciever extends BroadcastReceiver
 {
@@ -31,7 +37,10 @@ public class SMSReciever extends BroadcastReceiver
 		{
 			Object[] pdus=(Object[]) data.get("pdus");
 			
-			Log.v(App.TAG, "Sms Recieved pdu length: " + pdus.length);
+			if(LOCAL_LOGV)
+				Log.v(App.TAG, "Sms Recieved pdu length: " + pdus.length);
+			
+			log(context,"Sms Recieved pdu length: " + pdus.length);
 						
 			messages=new SmsMessage[pdus.length];
 			
@@ -62,6 +71,12 @@ public class SMSReciever extends BroadcastReceiver
 		}
 		
 	}
-		
+	
+	private void log(Context context, String message)
+	{
+		Log.d(TAG, message);
+			new AppLog(DateFormat.getDateFormatOrder(context))
+					.appendAndClose(message);
+	}
 
 }

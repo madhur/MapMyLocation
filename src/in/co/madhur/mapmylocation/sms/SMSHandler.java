@@ -16,6 +16,10 @@ import android.os.Bundle;
 import android.provider.ContactsContract.PhoneLookup;
 import android.util.Log;
 
+import static in.co.madhur.mapmylocation.App.LOG;
+import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
+import static in.co.madhur.mapmylocation.App.TAG;
+
 public class SMSHandler
 {
 	static Preferences appPreferences;
@@ -28,23 +32,21 @@ public class SMSHandler
 		
 		if(!appPreferences.isTrackMeEnabled())
 		{
-			Log.v(App.TAG, "Track me not enabled, returning");
+			if(LOCAL_LOGV)
+				Log.v(App.TAG, "Track me not enabled, returning");
 			return;
 		}
 		
 		reqInfo=contactExists(context, sender);
-		if(appPreferences.isOnlyAllowContacts())
+		if(appPreferences.isOnlyAllowContacts() && reqInfo==null)
 		{
-			if(reqInfo==null)
-			{
-				Log.v(App.TAG, "Sender not in the contacts, returning");
+				if(LOCAL_LOGV)
+					Log.v(App.TAG, "Sender not in the contacts, returning");
 				return;
-			}
-			else
-				reqInfo=new RequesterInfo(sender, sender, sender);
 			
 		}
-		else if(reqInfo==null)
+		
+		if(reqInfo==null)
 			reqInfo=new RequesterInfo(sender, sender, sender);
 		
 		showNotification=appPreferences.showTrackMeNotifications();
@@ -69,12 +71,6 @@ public class SMSHandler
 			
 			
 			ComponentName startedService=context.startService(smsService);
-			
-		//	Log.v(App.TAG, startedService.getShortClassName());
-			
-			// Log.v(App.TAG, "service started");
-		
-	
 		
 	}
 
@@ -89,7 +85,8 @@ public class SMSHandler
 		{
 			if (cur.moveToFirst())
 			{
-				Log.v(App.TAG, "Contact matched");
+				if(LOCAL_LOGV)
+					Log.v(App.TAG, "Contact matched");
 				return new RequesterInfo(cur.getString(0), cur.getString(1), cur.getString(2));
 				
 			}

@@ -7,6 +7,10 @@ import in.co.madhur.mapmylocation.Consts;
 import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.location.Coordinates;
 import in.co.madhur.mapmylocation.location.LocationGetter;
+import in.co.madhur.mapmylocation.location.LocationResolver;
+import in.co.madhur.mapmylocation.location.LocationResult;
+import in.co.madhur.mapmylocation.service.SMSService;
+import in.co.madhur.mapmylocation.util.AppLog;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -21,21 +25,34 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.SmsManager;
+import android.text.format.DateFormat;
 import android.util.Log;
 
+import static in.co.madhur.mapmylocation.App.LOG;
+import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
+import static in.co.madhur.mapmylocation.App.TAG;
 
 public class LocationTask extends AsyncTask<Integer, Integer, Coordinates> 
 {
-	Context context;
+	SMSService context;
 	boolean showNotification;
 	String sender, dispSender;
 	int notificationId;
 	int msgStamp;
 	BroadcastReceiver smsSentReciever, smsDeliveredReciver;
+	
+	
+	private Location location = null;
+	private final Object gotLocationLock = new Object();
+	private Coordinates coordinates;
+	private final LocationResult locationResult = new LocationResultChild();
+	
 	//private static AtomicInteger notificationCounter;
 	
 	@Override
@@ -54,7 +71,9 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 		}
 	}
 	
-	public LocationTask(Context context, boolean showNotification, String sender, String dispSender, int msgStamp)
+	
+	
+	public LocationTask(SMSService context, boolean showNotification, String sender, String dispSender, int msgStamp)
 	{
 		this.context=context;		
 		this.showNotification=showNotification;
@@ -67,24 +86,32 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 	@Override
 	protected Coordinates doInBackground(Integer... params)
 	{
-		LocationGetter getter=new LocationGetter(context);
-		Coordinates location=getter.getLocation(params[0], params[0]);
+		if(LOCAL_LOGV)
+			Log.v(TAG, "doInBackground("+params+")");
+		
+		Coordinates location=getLocation(Consts.MAX_WAIT_TIME, Consts.UPDATE_TIMEOUT);
 		return location;
 	}
 	
 	@Override
 	protected void onPostExecute(Coordinates result)
 	{
+		if(LOCAL_LOGV)
+			Log.v(TAG, "onPostExecute("+result+")");
 		
 		final NotificationManager nm=(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 		
 		if(result==null && showNotification)
 		{
-			Log.v(App.TAG, "Location Task: Could not obtain location, returning");
+			if(LOCAL_LOGV)
+				Log.v(App.TAG, "PostExecute: Could not obtain location, returning");
+			
+			log(context, "PostExecute: Could not obtain location");
 			
 			NotificationCompat.Builder builder=GetNotificationBuilder(sender, NotificationType.LOCATION_FAILURE);
 			
-			Log.v(App.TAG, "Notification1: " + msgStamp);
+			if(LOCAL_LOGV)
+				Log.v(App.TAG, "Notification for failure: " + msgStamp);
 			nm.notify((int) msgStamp, builder.build());
 			
 			return;
@@ -101,7 +128,8 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 					switch(getResultCode())
 					{
 					case Activity.RESULT_OK:
-						Log.v(App.TAG, "Notification2: " + msgStamp);
+						if(LOCAL_LOGV)
+							Log.v(App.TAG, "Notification for delivered: " + msgStamp);
 						NotificationCompat.Builder builder=GetNotificationBuilder(sender, NotificationType.OUTGOING_SMS);
 						
 						nm.notify((int) msgStamp, builder.build());
@@ -132,8 +160,8 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 					{
 					case Activity.RESULT_OK:
 						NotificationCompat.Builder builder=GetNotificationBuilder(sender, NotificationType.OUTGOING_SMS);
-						
-						Log.v(App.TAG, "Notification3: " + msgStamp);
+						if(LOCAL_LOGV)
+							Log.v(App.TAG, "Notification for sent: " + msgStamp);
 						nm.notify((int) msgStamp, builder.build());
 						break;
 						
@@ -174,6 +202,72 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 		
 	}
 	
+	private synchronized Coordinates getLocation(int maxWaitingTime, int updateTimeout)
+	{
+		try
+		{
+			if(LOCAL_LOGV)
+			Log.v(App.TAG, "getLocation(" + String.valueOf(maxWaitingTime)+","+String.valueOf(updateTimeout)+")");
+			
+			final int updateTimeoutPar = updateTimeout;
+			synchronized (gotLocationLock)
+			{
+				new Thread()
+				{
+					public void run()
+					{
+						if(LOCAL_LOGV)
+						{
+						Log.v(TAG, "Creating looper");
+						Log.v(TAG, "Thread Name: " + Thread.currentThread().getName()
+								+ "Thread ID: " + Thread.currentThread().getId());
+						}
+						
+						
+						
+						Looper.prepare();
+						LocationResolver locationResolver = new LocationResolver(context);
+						locationResolver.prepare();
+						locationResolver.getLocation(context, locationResult, updateTimeoutPar);
+						Looper.loop();
+					}
+				}.start();
+
+				gotLocationLock.wait(maxWaitingTime);
+			}
+		}
+		catch (InterruptedException e1)
+		{
+			Log.e(TAG, e1.getMessage());
+		}
+
+		if (location != null)
+			coordinates = new Coordinates(location.getLatitude(), location.getLongitude());
+		else
+			coordinates = Coordinates.UNDEFINED;
+		return coordinates;
+	}
+	
+	public class LocationResultChild extends LocationResult
+	{
+
+		@Override
+		public void gotLocation(Location location)
+		{
+			
+				synchronized (gotLocationLock)
+				{
+					LocationTask.this.location = location;
+					gotLocationLock.notifyAll();
+					Looper.myLooper().quit();
+				}
+			
+
+		}
+
+	}
+
+	
 	private void sendSMS(Coordinates result)
 	{
 		PendingIntent sentPI, deliveredPI;
@@ -188,6 +282,13 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 		
 		smsManager.sendTextMessage(sender, null, message, sentPI, deliveredPI);
 		
+	}
+	
+	private void log(Context context, String message)
+	{
+		Log.d(TAG, message);
+			new AppLog(DateFormat.getDateFormatOrder(context))
+					.appendAndClose(message);
 	}
 
 	
@@ -232,24 +333,6 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 		
 		return noti;
 	}
-	
-//	private void createCompatibleSecondLine(CharSequence pTitle,
-//			Notification.Builder pBuilder, InboxStyle pInboxStyle)
-//	{
-//		// set the text for pre API 16 devices (or for expanded)
-//		if (android.os.Build.VERSION.SDK_INT < 16)
-//		{
-//			Log.v(App.TAG, "setcontenttext");
-//			pBuilder.setContentText(pTitle);
-//		}
-//		else
-//		{
-//			Log.v(App.TAG, "setsummarytext");
-//			pInboxStyle.setSummaryText(pTitle);
-//			
-//		}
-//	}
-	
 	
 	
 }

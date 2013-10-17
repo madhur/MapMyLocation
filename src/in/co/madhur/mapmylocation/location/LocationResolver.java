@@ -1,5 +1,7 @@
 package in.co.madhur.mapmylocation.location;
 
+import in.co.madhur.mapmylocation.util.AppLog;
+
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -13,7 +15,12 @@ import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Looper;
 import android.os.Message;
+import android.text.format.DateFormat;
 import android.util.Log;
+
+import static in.co.madhur.mapmylocation.App.LOG;
+import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
+import static in.co.madhur.mapmylocation.App.TAG;
 
 public class LocationResolver 
 {
@@ -23,6 +30,7 @@ public class LocationResolver
 	private boolean gpsEnabled = false;
 	private boolean networkEnabled = false;
 	private Handler locationTimeoutHandler;
+	private Context context;
 
 	private final Callback locationTimeoutCallback = new Callback()
 	{
@@ -39,20 +47,32 @@ public class LocationResolver
 				networkLocation = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
 
 			// We got both GPS and network location
-			Log.v("Tag", "Got both gps and network location");
+			
 			if (gpsLocation != null && networkLocation != null)
 			{
+				if(LOCAL_LOGV)
+					Log.v(TAG, "Got last location from both GPS and network");
+				log(context, "Got last location from both GPS and network");
+				
 				if (gpsLocation.getTime() > networkLocation.getTime())
+				{
+					log(context, "Returning GPS location");
 					locationResult.gotLocation(gpsLocation);
+				}
 				else
+				{
+					log(context, "Returning network location");
 					locationResult.gotLocation(networkLocation);
+				}
 				return;
 			}
 
 			// We got only GPS location
 			if (gpsLocation != null)
 			{
-				Log.v("Tag", "returning GPS last location");
+				if(LOCAL_LOGV)
+					Log.v(TAG, "Returning GPS last location");
+				log(context, "Returning last GPS location");
 				locationResult.gotLocation(gpsLocation);
 				return;
 				
@@ -61,12 +81,18 @@ public class LocationResolver
 			// We got only network location
 			if (networkLocation != null)
 			{
-				Log.v("Tag", "returning network last location");
+				Log.v(TAG, "Returning network last location");
+				log(context, "Returning last network location");
+				
 				locationResult.gotLocation(networkLocation);
 				return;
 			}
 			
-			Log.v("Tag", "Could not find any location");
+			if(LOCAL_LOGV)
+				Log.v(TAG, "Could not find any location");
+			
+			log(context, "Could not retrieve last location as well");
+			
 			// We could not find out the location
 			locationResult.gotLocation(null);
 		}
@@ -74,7 +100,8 @@ public class LocationResolver
 		@Override
 		public boolean handleMessage(Message msg)
 		{
-			Log.v("Tag", "Executing handle message in Thread Name: " + Thread.currentThread().getName()
+			if(LOCAL_LOGV)
+				Log.v(TAG, "Executing handle message in Thread Name: " + Thread.currentThread().getName()
 					+ "Thread ID: " + Thread.currentThread().getId());
 
 			locationTimeoutFunc();
@@ -87,11 +114,16 @@ public class LocationResolver
 	{
 		public void onLocationChanged(Location location)
 		{
-			Log.v("Tag", "Got Location here: Thread Name: " + Thread.currentThread().getName()
+			if(LOCAL_LOGV)
+			{
+				Log.v(TAG, "Got Location here: Thread Name: " + Thread.currentThread().getName()
 					+ "Thread ID: " + Thread.currentThread().getId());
 
 			
-			Log.v("Tag", "Got GPS location");
+				Log.v(TAG, "Got GPS location");
+			}
+			
+			log(context, "Retrieved location through GPS");
 			
 			timer.cancel();
 			locationResult.gotLocation(location);
@@ -101,14 +133,17 @@ public class LocationResolver
 
 		public void onProviderDisabled(String provider)
 		{
+			log(context, "GPS provider is disabled");
 		}
 
 		public void onProviderEnabled(String provider)
 		{
+			log(context, "GPS provider is enabled");
 		}
 
 		public void onStatusChanged(String provider, int status, Bundle extras)
 		{
+			log(context, "GPS provider status is changed");
 		}
 	};
 	
@@ -117,10 +152,15 @@ public class LocationResolver
 	{
 		public void onLocationChanged(Location location)
 		{
-			Log.v("Tag", "Got Location here: Thread Name: " + Thread.currentThread().getName()
-					+ "Thread ID: " + Thread.currentThread().getId());
-			
-			Log.v("Tag", "Got network location");
+			if (LOCAL_LOGV)
+			{
+				Log.v(TAG, "Got Location here: Thread Name: "
+						+ Thread.currentThread().getName() + "Thread ID: "
+						+ Thread.currentThread().getId());
+				Log.v(TAG, "Got network location");
+			}
+
+			log(context, "Got location fix through network");
 			timer.cancel();
 			locationResult.gotLocation(location);
 			locationManager.removeUpdates(this);
@@ -129,20 +169,29 @@ public class LocationResolver
 
 		public void onProviderDisabled(String provider)
 		{
+			log(context, "Network provider is disabled");
 		}
 
 		public void onProviderEnabled(String provider)
 		{
+			log(context, "Network provider is enabled");
 		}
 
 		public void onStatusChanged(String provider, int status, Bundle extras)
 		{
+			log(context, "Netowrk provider status is changed");
 		}
 	};
 
+	public LocationResolver(Context context2)
+	{
+		this.context=context2;
+	}
+
 	public void prepare()
 	{
-		Log.v("Tag", "Preparing handler here: Thread Name: " + Thread.currentThread().getName()
+		if(LOCAL_LOGV)
+		Log.v(TAG, "Preparing handler here: Thread Name: " + Thread.currentThread().getName()
 				+ "Thread ID: " + Thread.currentThread().getId());
 
 		locationTimeoutHandler = new Handler(locationTimeoutCallback);
@@ -161,7 +210,7 @@ public class LocationResolver
 		}
 		catch (Exception ex)
 		{
-			Log.v("Tag", "Provider not permitted");
+			Log.e(TAG, "GPS Provider not permitted");
 		}
 		try
 		{
@@ -169,7 +218,7 @@ public class LocationResolver
 		}
 		catch (Exception ex)
 		{
-			Log.v("Tag", "Provider not permitted");
+			Log.e(TAG, "Network Provider not permitted");
 		}
 
 		// don't start listeners if no provider is enabled
@@ -196,12 +245,19 @@ public class LocationResolver
 		@Override
 		public void run()
 		{
-			Log.v("Tag", "Running  timer here: Thread Name: " + Thread.currentThread().getName()
+			if(LOCAL_LOGV)
+				Log.v(TAG, "Running timeout of update listender: Thread Name: " + Thread.currentThread().getName()
 					+ "Thread ID: " + Thread.currentThread().getId());
 			locationTimeoutHandler.sendEmptyMessage(0);
 		}
 	}
 
-
+	
+	private void log(Context context, String message)
+	{
+		Log.d(TAG, message);
+			new AppLog(DateFormat.getDateFormatOrder(context))
+					.appendAndClose(message);
+	}
 	
 }

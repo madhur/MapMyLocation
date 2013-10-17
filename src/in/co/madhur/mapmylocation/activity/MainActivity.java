@@ -4,6 +4,8 @@ import in.co.madhur.mapmylocation.App;
 import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.preferences.Preferences;
 import in.co.madhur.mapmylocation.preferences.Preferences.Keys.*;
+import in.co.madhur.mapmylocation.util.AppLog;
+
 import java.util.List;
 
 import android.app.AlertDialog;
@@ -20,6 +22,7 @@ import android.preference.PreferenceActivity;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 
@@ -57,6 +60,32 @@ public class MainActivity extends PreferenceActivity
 	}
 	
 	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item)
+	{
+		switch(item.getItemId())
+		{
+			case R.id.action_viewlog:
+				show(Dialogs.VIEW_LOG);
+				return true;
+				
+				
+			case R.id.action_about:
+				show(Dialogs.ABOUT_DIALOG);
+				
+				return true;
+				
+				
+			default:
+				return super.onMenuItemSelected(featureId, item);
+			
+		}
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	
+	@Override
 	@Deprecated
 	protected Dialog onCreateDialog(final int id)
 	{
@@ -92,6 +121,9 @@ public class MainActivity extends PreferenceActivity
 			
 			return new AlertDialog.Builder(this).setPositiveButton(android.R.string.ok, null).setView(v).create();
 			
+		case VIEW_LOG:
+			return AppLog.displayAsDialog(App.LOG, this);
+			
 		default:
 			return null;
 		}
@@ -113,6 +145,8 @@ public class MainActivity extends PreferenceActivity
 			// ignore
 		}
 	}
+	
+	
 	
 	
 	private void UpdateFBIntervalLabel(String interval)

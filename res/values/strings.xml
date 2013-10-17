@@ -55,5 +55,5 @@
     
     <string name="location_error">Location not enabled</string>
 	<string name="location_error_desc">Enable access to your location in the \'Location Access\' settings of your phone. At least one of th etwo options (\'GPS Satellites\' and \'WIFI\' and mobile network location\') must be enabled</string>
-
+ 	<string name="app_log_empty">Log is empty. Enable it in \"Advanced settings\".</string>
 </resources>
