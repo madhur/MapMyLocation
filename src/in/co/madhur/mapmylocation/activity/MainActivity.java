@@ -1,6 +1,7 @@
 package in.co.madhur.mapmylocation.activity;
 
 import in.co.madhur.mapmylocation.App;
+import in.co.madhur.mapmylocation.Consts;
 import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.preferences.Preferences;
 import in.co.madhur.mapmylocation.preferences.Preferences.Keys.*;
@@ -8,18 +9,22 @@ import in.co.madhur.mapmylocation.util.AppLog;
 
 import java.util.List;
 
+import com.facebook.RequestAsyncTask;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.provider.Settings;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -30,7 +35,9 @@ import android.webkit.WebView;
 public class MainActivity extends PreferenceActivity
 {
 	Preferences appPreferences;
-
+	private final int FB_REQUESTCODE=1;
+	private final int FB_SELCTFRIENDS=2;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -39,15 +46,7 @@ public class MainActivity extends PreferenceActivity
 		
 		appPreferences=new Preferences(this);
 		
-		SetListeners();
-		
-		UpdateFBIntervalLabel(null);
-		UpdateMaxRateLabel(null);
-		
-		
 	}
-	
-	
 	
 
 	@Override
@@ -83,6 +82,25 @@ public class MainActivity extends PreferenceActivity
 		
 	}
 	
+	@Override
+	protected void onResume()
+	{
+		// TODO Auto-generated method stub
+		super.onResume();
+		
+		// Connect preference listeners
+		SetListeners();
+		
+		// Update the label of FB interval
+		UpdateFBIntervalLabel(null);
+		
+		// Update the label of SMS interval
+		UpdateMaxRateLabel(null);
+		
+		// Update the checkbox and summary of ENABLE Live Track (FB Connection)
+		UpdateFBConnected();
+		
+	}
 	
 	
 	@Override
@@ -124,11 +142,97 @@ public class MainActivity extends PreferenceActivity
 		case VIEW_LOG:
 			return AppLog.displayAsDialog(App.LOG, this);
 			
+		case FB_DISCONNECT:
+			return new AlertDialog.Builder(this).setMessage(R.string.ui_dialog_disconnect_msg).setTitle(null).setPositiveButton(android.R.string.ok, new OnClickListener()
+			{
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					CheckBoxPreference fbConnected=(CheckBoxPreference) findPreference(Preferences.Keys.CONNECT_FB.key);
+					appPreferences.clearFBData();
+					UpdateFBConnected();
+					
+				}
+			}).setNegativeButton(android.R.string.cancel, new OnClickListener()
+			{
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which)
+				{
+					
+				}
+			}).create();
+			
 		default:
 			return null;
 		}
 	}
 	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if(requestCode==FB_REQUESTCODE)
+		{
+			
+			if(resultCode==RESULT_OK)
+			{
+				String access_token=data.getStringExtra(Consts.ACCESS_TOKEN);
+				String access_expires=data.getStringExtra(Consts.ACCESS_EXPIRES);
+				String username=data.getStringExtra(Consts.USER_NAME);
+				
+				appPreferences.setFBTokenData(access_token, access_expires, username);
+				
+			}
+			else if(resultCode== RESULT_CANCELED)
+			{
+				appPreferences.clearFBData();
+				
+			}
+			
+			UpdateFBConnected();
+			
+		}
+		else if(requestCode == FB_SELCTFRIENDS)
+		{
+			if(resultCode==RESULT_OK)
+			{
+				
+				
+			}
+			else if(resultCode==RESULT_CANCELED)
+			{
+			
+				
+			}
+			
+		}
+	}
+	
+	private void UpdateFBConnected()
+	{
+		CheckBoxPreference fbConnected=(CheckBoxPreference) findPreference(Preferences.Keys.CONNECT_FB.key);
+		String fbAccessToken=appPreferences.getFBAccessToken();
+		if(fbAccessToken.isEmpty())
+			fbConnected.setChecked(false);
+		else
+			fbConnected.setChecked(true);
+
+		String username=appPreferences.getFBUserName();
+		
+		String summary;
+		if(fbConnected.isChecked())
+			summary=getString(R.string.fb_already_connected);
+		else
+			summary=getString(R.string.fb_needs_connecting);
+		
+		fbConnected.setSummary(summary);
+		
+	}
+
+
+
+
 	public void show(Dialogs d)
 	{
 		showDialog(d.ordinal());
@@ -234,9 +338,22 @@ public class MainActivity extends PreferenceActivity
 				boolean newVal=(Boolean) newValue;
 				if(newVal)
 				{
+					startActivityForResult(new Intent(MainActivity.this, FBLogin.class), FB_REQUESTCODE);
 					
-					// preference.setsu
 				}
+				else
+					show(Dialogs.FB_DISCONNECT);
+				return false;
+			}
+		});
+		
+		findPreference(Preferences.Keys.SELECT_FB_FRIENDS.key).setOnPreferenceClickListener(new OnPreferenceClickListener()
+		{
+			
+			@Override
+			public boolean onPreferenceClick(Preference preference)
+			{
+				startActivityForResult(new Intent(MainActivity.this, FriendPickerActivity.class), FB_SELCTFRIENDS);
 				return true;
 			}
 		});

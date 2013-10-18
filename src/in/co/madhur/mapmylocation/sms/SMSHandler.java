@@ -24,6 +24,7 @@ public class SMSHandler
 {
 	static Preferences appPreferences;
 
+	
 	public static void HandleIncomingSMS(Context context, String message, String sender)
 	{
 		appPreferences=new Preferences(context);

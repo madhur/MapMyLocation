@@ -3,24 +3,24 @@ package in.co.madhur.mapmylocation.preferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.Preference;
 import android.preference.PreferenceManager;
 import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.preferences.Preferences.Keys.*;
 
 public final class Preferences
 {
-	private Context context;
 	private SharedPreferences sharedPreferences;
 
 	public enum Keys
 	{
 		
-		ENABLE_TRACKME("pref_enable_trackme_desc"),
+		ENABLE_TRACKME("pref_enable_trackme"),
 		SECRET_CODE("pref_setsecretcode"),
 		ALLOW_CONTACTS("pref_onlyallowcontacts"),
 		SELECT_CONTACTS("pref_selectcontacts"),
 		MAX_RATE("pref_max_rate"),
-		ENABLE_LIVETRACK("pref_enable_livetrack_desc"),
+		ENABLE_LIVETRACK("pref_enable_livetrack"),
 		CONNECT_FB("pref_connectfb"),
 		FB_INTERVAL("pref_fbinterval"),
 		SELECT_FB_FRIENDS("pref_selectfbfriends"),
@@ -28,7 +28,10 @@ public final class Preferences
 		ABOUT("pref_about_desc"),
 		FAQ("pref_faq_desc"),
 		SHOW_TRACKME_NOTIFICATION("pref_trackme_shownotification"),
-		SHOW_LIVETRACK_NOTIFICATION("pref_livetrack_shownotification");
+		SHOW_LIVETRACK_NOTIFICATION("pref_livetrack_shownotification"),
+		FB_ACCESS_TOKEN("fb_access_token"),
+		FB_ACCESS_EXPIRES("fb_access_expires"),
+		FB_USERNAME("fb_username");
 		
 		public final String key;
 		private Keys(String key)
@@ -42,7 +45,6 @@ public final class Preferences
 	
 	public Preferences(Context context)
 	{
-		this.context=context;
 		this.sharedPreferences=PreferenceManager.getDefaultSharedPreferences(context);
 		
 	}
@@ -107,13 +109,45 @@ public final class Preferences
 		return sharedPreferences.getBoolean(Keys.SHOW_TRACKME_NOTIFICATION.key, true);
 		
 	}
-	
-	
-	
-	
 
+	public void clearFBData()
+	{
+		SharedPreferences.Editor editor=sharedPreferences.edit();
+		editor.putString(Keys.FB_ACCESS_TOKEN.key, "");
+		editor.putString(Keys.FB_ACCESS_EXPIRES.key, "");
+		editor.putString(Keys.FB_USERNAME.key, "");
+		editor.commit();
+	}
+	
+	public void setFBTokenData(String access_token, String access_expires, String username)
+	{
+		SharedPreferences.Editor editor=sharedPreferences.edit();
+		editor.putString(Keys.FB_ACCESS_TOKEN.key, access_token);
+		editor.putString(Keys.FB_ACCESS_EXPIRES.key, access_expires);
+		editor.putString(Keys.FB_USERNAME.key, username);
+		editor.commit();
+	}
+	
+	public String getFBAccessToken()
+	{
+		
+		return sharedPreferences.getString(Keys.FB_ACCESS_TOKEN.key,"");
+	}
+	
+	
+	public String getFBAccessExpires()
+	{
+		return sharedPreferences.getString(Keys.FB_ACCESS_EXPIRES.key, "");
+	}
 
-
+	public String getFBUserName()
+	{
+		// TODO Auto-generated method stub
+		return sharedPreferences.getString(Keys.FB_ACCESS_EXPIRES.key, "");
+	}
+	
+	
+	
 }
 	
 	

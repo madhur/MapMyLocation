@@ -5,7 +5,7 @@
         android:title="@string/pref_category_trackme" >
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="pref_enable_trackme_desc"
+            android:key="pref_enable_trackme"
             android:summary="@string/pref_enable_trackme_desc"
             android:title="@string/pref_enable_trackme" />
 
@@ -55,7 +55,7 @@
         android:title="@string/pref_category_livetrack" >
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="pref_enable_livetrack_desc"
+            android:key="pref_enable_livetrack"
             android:summary="@string/pref_enable_livetrack_desc"
             android:title="@string/pref_enable_livetrack" />
 
