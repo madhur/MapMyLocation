@@ -61,6 +61,17 @@
             android:exported="false"
             android:label="MapMyLocation SMS Service" >
         </service>
+         <service
+            android:name=".service.LiveTrackService"
+            android:exported="false"
+            android:label="MapMyLocation LiveTrack Service" >
+        </service>
+        <service
+            android:name=".service.LiveTrackService1"
+            android:exported="false"
+            android:label="MapMyLocation LiveTrack Service" >
+        </service>
+         
     </application>
 
 </manifest>

@@ -42,4 +42,21 @@
         <item>86400</item>        
     </string-array>
     
+    <string-array name="pref_fbfriends">
+        <item>Self</item>
+        <item>Friends</item>
+        <item>Friends of Friends</item>
+        <item>Everyone</item>
+        <item>Custom</item>
+    </string-array>
+    
+    <string-array name="pref_fbfriends_values">
+        <item>SELF</item>
+        <item>ALL_FRIENDS</item>
+        <item>FRIENDS_OF_FRIENDS</item>
+        <item>EVERYONE</item>
+        <item>CUSTOM</item>
+    </string-array>
+    
+
 </resources>

@@ -3,14 +3,14 @@
     <PreferenceCategory
         android:summary="@string/pref_category_trackme_desc"
         android:title="@string/pref_category_trackme" >
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="pref_enable_trackme"
             android:summary="@string/pref_enable_trackme_desc"
             android:title="@string/pref_enable_trackme" />
 
         <PreferenceScreen
-            android:key="pref_settings_trackme_desc"
+            android:key="pref_settings_trackme"
             android:summary="@string/pref_settings_trackme_desc"
             android:title="@string/pref_settings_trackme" >
             <EditTextPreference
@@ -35,7 +35,7 @@
                 android:title="@string/pref_selectcontacts" />
 
             <ListPreference
-                android:defaultValue="30"
+                android:defaultValue="300"
                 android:entries="@array/pref_max_rate"
                 android:entryValues="@array/pref_max_rate_values"
                 android:key="pref_max_rate"
@@ -53,7 +53,7 @@
     <PreferenceCategory
         android:summary="@string/pref_category_livetrack_desc"
         android:title="@string/pref_category_livetrack" >
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="pref_enable_livetrack"
             android:summary="@string/pref_enable_livetrack_desc"
@@ -61,7 +61,7 @@
 
         <PreferenceScreen
             android:summary="@string/pref_settings_livetrack_desc"
-            android:title="@string/pref_settings_livetrack" >
+            android:title="@string/pref_settings_livetrack" android:key="pref_settings_livetrack" >
             <CheckBoxPreference
                 android:defaultValue="false"
                 android:key="pref_connectfb"
@@ -69,14 +69,14 @@
                 android:title="@string/pref_connectfb" />
 
             <ListPreference
-                android:defaultValue="30"
+                android:defaultValue="300"
                 android:entries="@array/pref_fbinterval"
                 android:entryValues="@array/pref_fbinterval_values"
                 android:key="pref_fbinterval"
                 android:summary="@string/pref_fbintervald_desc"
                 android:title="@string/pref_fbinterval" />
 
-            <Preference
+            <ListPreference android:entries="@array/pref_fbfriends" android:entryValues="@array/pref_fbfriends_values" android:defaultValue="FRIENDS"
                 android:key="pref_selectfbfriends"
                 android:summary="@string/pref_selectfbfriends_desc"
                 android:title="@string/pref_selectfbfriends" />

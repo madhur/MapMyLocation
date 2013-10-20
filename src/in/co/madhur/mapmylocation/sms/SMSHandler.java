@@ -35,8 +35,11 @@ public class SMSHandler
 		{
 			if(LOCAL_LOGV)
 				Log.v(App.TAG, "Track me not enabled, returning");
+			// Show notification of Track me not enabled
+			
 			return;
 		}
+		
 		
 		reqInfo=contactExists(context, sender);
 		if(appPreferences.isOnlyAllowContacts() && reqInfo==null)

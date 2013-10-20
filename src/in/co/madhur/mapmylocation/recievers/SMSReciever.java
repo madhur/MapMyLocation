@@ -33,6 +33,7 @@ public class SMSReciever extends BroadcastReceiver
 		appPreferences=new Preferences(context);
 		long timeStamp = 0;
 		
+		
 		if(data!=null)
 		{
 			Object[] pdus=(Object[]) data.get("pdus");
@@ -40,7 +41,7 @@ public class SMSReciever extends BroadcastReceiver
 			if(LOCAL_LOGV)
 				Log.v(App.TAG, "Sms Recieved pdu length: " + pdus.length);
 			
-			log(context,"Sms Recieved pdu length: " + pdus.length);
+			
 						
 			messages=new SmsMessage[pdus.length];
 			
@@ -61,6 +62,7 @@ public class SMSReciever extends BroadcastReceiver
 					return;
 				else
 				{
+					log(context,"Hermes SMS Recieved" + pdus.length);
 					abortBroadcast();
 					break;
 					

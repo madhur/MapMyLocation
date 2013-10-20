@@ -1,17 +1,28 @@
 package in.co.madhur.mapmylocation.preferences;
 
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.preference.Preference;
 import android.preference.PreferenceManager;
+import android.util.Log;
+import in.co.madhur.mapmylocation.App;
+import in.co.madhur.mapmylocation.Consts;
 import in.co.madhur.mapmylocation.R;
+import in.co.madhur.mapmylocation.activity.FriendPickerActivity;
+import in.co.madhur.mapmylocation.activity.MainActivity;
 import in.co.madhur.mapmylocation.preferences.Preferences.Keys.*;
 
-public final class Preferences
+public final class Preferences implements OnSharedPreferenceChangeListener 
 {
 	private SharedPreferences sharedPreferences;
-
+	Context context;
+	private final int FB_REQUESTCODE=1;
+	private final int FB_SELCTFRIENDS=2;
+	
 	public enum Keys
 	{
 		
@@ -29,8 +40,11 @@ public final class Preferences
 		FAQ("pref_faq_desc"),
 		SHOW_TRACKME_NOTIFICATION("pref_trackme_shownotification"),
 		SHOW_LIVETRACK_NOTIFICATION("pref_livetrack_shownotification"),
-		FB_ACCESS_TOKEN("fb_access_token"),
-		FB_ACCESS_EXPIRES("fb_access_expires"),
+		//FB_ACCESS_TOKEN("fb_access_token"),
+		//FB_ACCESS_EXPIRES("fb_access_expires"),
+		FB_FRIENDS("pref_selectfbfriends"),
+		SETTINGS_TRACKME("pref_settings_trackme"),
+		SETTINGS_LIVETRACK("pref_settings_livetrack"),
 		FB_USERNAME("fb_username");
 		
 		public final String key;
@@ -45,8 +59,9 @@ public final class Preferences
 	
 	public Preferences(Context context)
 	{
+		this.context=context;
 		this.sharedPreferences=PreferenceManager.getDefaultSharedPreferences(context);
-		
+		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 	}
 	
 	public String getSecretCode()
@@ -79,19 +94,41 @@ public final class Preferences
 		
 	}
 	
-	public String getMaxRate()
+	public int getMaxRate()
 	{
-		return sharedPreferences.getString(Keys.MAX_RATE.key, "");
+		return getStringAsInt(Keys.MAX_RATE.key, Defaults.MAX_SMS_RATE);
 		
 		
 	}
 	
-	public String getFBInterval()
+	public String getFBFriends()
 	{
-		return sharedPreferences.getString(Keys.FB_INTERVAL.key, "");
+		
+		return sharedPreferences.getString(Keys.FB_FRIENDS.key, Defaults.FB_FRIENDS);
+	}
+	
+	public int getFBInterval()
+	{
+		return getStringAsInt(Keys.FB_INTERVAL.key, Defaults.FB_RATE);
 		
 	}
 	
+	private int getStringAsInt(String key, int def)
+	{
+		try
+		{
+			String s = sharedPreferences.getString(key, null);
+			if (s == null)
+				return def;
+
+			return Integer.valueOf(s);
+		}
+		catch (NumberFormatException e)
+		{
+			return def;
+		}
+	}
+
 	public boolean isOnlyAllowContacts()
 	{
 		return sharedPreferences.getBoolean(Keys.ALLOW_CONTACTS.key, false);
@@ -110,6 +147,7 @@ public final class Preferences
 		
 	}
 
+	/*
 	public void clearFBData()
 	{
 		SharedPreferences.Editor editor=sharedPreferences.edit();
@@ -144,9 +182,25 @@ public final class Preferences
 	{
 		// TODO Auto-generated method stub
 		return sharedPreferences.getString(Keys.FB_ACCESS_EXPIRES.key, "");
+	}*/
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
+			String key)
+	{
+
+		if (key.equals(Keys.FB_FRIENDS.key))
+		{
+			String fbFriendsVal = getFBFriends();
+			if (fbFriendsVal.equals(Consts.FB_FRIENDS_FIRE))
+			{
+				Activity activity = (Activity) context;
+				activity.startActivityForResult(new Intent(context,
+						FriendPickerActivity.class), FB_SELCTFRIENDS);
+			}
+		}
+
 	}
-	
-	
 	
 }
 	

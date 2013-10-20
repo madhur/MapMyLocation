@@ -27,3 +27,16 @@ proguard/
 *.ipr
 *.iws
 .idea/
+
+
+target
+out
+build.xml
+proguard.cfg
+proguard-project.txt
+gen-external-apklibs/
+.gradle
+build
+facebooksdk
+
+.settings

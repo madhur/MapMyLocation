@@ -34,6 +34,7 @@ public class FBLogin extends Activity
 		uiHelper = new UiLifecycleHelper(this, statusCallback);
 		
 		
+		
 	}
 
 	Session.StatusCallback statusCallback = new StatusCallback()
@@ -52,7 +53,7 @@ public class FBLogin extends Activity
 			Exception exception)
 	{
 		Intent returnIntent=new Intent();
-		
+			
 		
 		if (state.isOpened())
 		{

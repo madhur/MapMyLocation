@@ -13,5 +13,8 @@ public final class Consts {
 	public static String SENT="SMS_SENT";
 	public static String DELIVERED="SMS_DELIVERED";
 	public static String GOOGLE_MAPS_URL="http://maps.google.com/?q=";
+	public static String FB_FRIENDS_FIRE="CUSTOM";
+	
+	public static String FB_POST_ACTION="FB_POST_ACTION";
 
 }
