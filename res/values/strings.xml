@@ -52,6 +52,9 @@
     <string name="noti_loc_request">Location requested</string>
     <string name="noti_loc_response">Location sent</string>
     <string name="noti_loc_failure">Could not obtain location</string>
+    <string name="noti_fb_posted">Your location was successfully posted to Facebook</string>
+    <string name="noti_fb_failure">Could not post location to Facebook. Make sure you have active data or WiFi connection</string>
+    <string name="noti_fb_session_failure">Your facebook session has expired. Please connect again in Settings</string>
     
     <string name="location_error">Location not enabled</string>
 	<string name="location_error_desc">Enable access to your location in the \'Location Access\' settings of your phone. At least one of th etwo options (\'GPS Satellites\' and \'WIFI\' and mobile network location\') must be enabled</string>

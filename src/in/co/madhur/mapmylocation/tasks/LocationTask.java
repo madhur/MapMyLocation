@@ -272,13 +272,12 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 	{
 		PendingIntent sentPI, deliveredPI;
 		
-		
 		sentPI=PendingIntent.getBroadcast(context, 0, new Intent(Consts.SENT), 0);
 		deliveredPI=PendingIntent.getBroadcast(context, 0, new Intent(Consts.DELIVERED), 0);
 		
 		SmsManager smsManager=SmsManager.getDefault();
 		
-		String message=Consts.GOOGLE_MAPS_URL+result.getLatitude()+","+result.getLongitude();
+		String message= String.format(Consts.GOOGLE_MAPS_URL,result.getLatitude(), result.getLongitude());
 		
 		smsManager.sendTextMessage(sender, null, message, sentPI, deliveredPI);
 		

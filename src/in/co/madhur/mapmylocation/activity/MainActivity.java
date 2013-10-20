@@ -489,7 +489,7 @@ public class MainActivity extends PreferenceActivity
 				if(newVal)
 				{
 					
-					alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 10000, (long)recurTime, fbPendingIntent );
+					alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 10000, 10000, fbPendingIntent );
 					Log.v(App.TAG, "Scheduling FB Posts" );
 				}
 				else
