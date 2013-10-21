@@ -2,6 +2,7 @@ package in.co.madhur.mapmylocation.preferences;
 
 
 import android.app.Activity;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -194,9 +195,23 @@ public final class Preferences implements OnSharedPreferenceChangeListener
 			String fbFriendsVal = getFBFriends();
 			if (fbFriendsVal.equals(Consts.FB_FRIENDS_FIRE))
 			{
+				if(context instanceof Activity)
+				{
 				Activity activity = (Activity) context;
 				activity.startActivityForResult(new Intent(context,
 						FriendPickerActivity.class), FB_SELCTFRIENDS);
+				}
+				else if (context instanceof Service)
+				{
+					Service service=(Service) context;
+					service.startActivity(new Intent(context,
+						FriendPickerActivity.class), null);
+					
+				}
+				else
+				{
+					Log.e(App.TAG, "Could not start FB Friends Activity");
+				}
 			}
 		}
 

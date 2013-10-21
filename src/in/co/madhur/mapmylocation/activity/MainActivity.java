@@ -99,7 +99,7 @@ public class MainActivity extends PreferenceActivity
 		UpdateFBIntervalLabel(null);
 		
 		// Update the label of SMS interval
-		UpdateMaxRateLabel(null);
+		// UpdateMaxRateLabel(null);
 		
 		// Update the checkbox and summary of ENABLE Live Track (FB Connection)
 		UpdateFBConnected();
@@ -267,10 +267,10 @@ public class MainActivity extends PreferenceActivity
 		CheckBoxPreference fbConnected=(CheckBoxPreference) findPreference(Preferences.Keys.CONNECT_FB.key);
 		Session fbSession=Session.getActiveSession();
 		
-		if(fbSession==null)
-			fbConnected.setChecked(false);
-		else
+		if(fbSession!=null && fbSession.isOpened())
 			fbConnected.setChecked(true);
+		else
+			fbConnected.setChecked(false);
 
 		
 		String summary;
@@ -392,7 +392,7 @@ public class MainActivity extends PreferenceActivity
 		});
 		
 		
-		findPreference(Preferences.Keys.MAX_RATE.key).setOnPreferenceChangeListener(new OnPreferenceChangeListener()
+		/*findPreference(Preferences.Keys.MAX_RATE.key).setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 		{
 			
 			@Override
@@ -402,7 +402,7 @@ public class MainActivity extends PreferenceActivity
 				UpdateMaxRateLabel(newValue.toString());
 				return true;
 			}
-		});
+		});*/
 		
 		findPreference(Preferences.Keys.FB_FRIENDS.key).setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 		{
@@ -516,7 +516,7 @@ public class MainActivity extends PreferenceActivity
 			}
 		});
 		
-		findPreference(Preferences.Keys.ABOUT.key).setOnPreferenceClickListener(new OnPreferenceClickListener()
+		/*findPreference(Preferences.Keys.ABOUT.key).setOnPreferenceClickListener(new OnPreferenceClickListener()
 		{
 			
 			@Override
@@ -526,7 +526,7 @@ public class MainActivity extends PreferenceActivity
 				return true;
 				
 			}
-		});
+		});*/
 	}
 
 

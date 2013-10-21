@@ -49,20 +49,21 @@ public class LiveTrackService1 extends IntentService
 	{
 		super("Live Track Service");
 		Log.v(App.TAG, "Starting live track service");
-		// TODO Auto-generated constructor stub
 	}
 	
 	public LiveTrackService1()
 	{
 		
-		super("Live Track Service");
-		appPrefences=new Preferences(this);
+		super("Hermes Live Track Service");
+		
 		
 	}
 
 	@Override
 	protected void onHandleIntent(Intent intent)
 	{
+		appPrefences=new Preferences(this);
+		
 		boolean showNotification=appPrefences.showLiveTrackNotifications();
 		NotificationManager nm=(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		
@@ -114,7 +115,7 @@ public class LiveTrackService1 extends IntentService
 		catch (JSONException e)
 		{
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.e(App.TAG, e.getMessage());
 		}
 		
 		
@@ -134,7 +135,7 @@ public class LiveTrackService1 extends IntentService
 			
 			if(showNotification)
 			{
-				NotificationCompat.Builder builder=GetNotificationBuilder(NotificationType.FB_FAILURE);
+				NotificationCompat.Builder builder=GetNotificationBuilder(NotificationType.FB_FAILURE, fbResponse.getError().getErrorMessage());
 				nm.notify(0, builder.build());
 			}
 		}
@@ -271,26 +272,30 @@ public class LiveTrackService1 extends IntentService
 	private NotificationCompat.Builder GetNotificationBuilder(NotificationType type)
 	{
 		NotificationCompat.Builder noti=new NotificationCompat.Builder(this);
-		// noti.setContentTitle(dispSender);
+		noti.setContentTitle(getString(R.string.app_name));
 		noti.setAutoCancel(true);
 		
 		switch(type)
 		{
 		case LOCATION_FAILURE:
+			noti.setTicker(getString(R.string.noti_loc_response));
 			noti.setContentText(getString(R.string.noti_loc_response));
 			
 			break;
 			
 		case FB_POSTED:
+			noti.setTicker(getString(R.string.noti_fb_posted));
 			noti.setContentText(getString(R.string.noti_fb_posted));
 			break;
 			
 		case  FB_FAILURE:
+			noti.setTicker(getString(R.string.noti_fb_failure));
 			noti.setContentText(getString(R.string.noti_fb_failure));
 			
 			break;
 			
 		case FB_SESSION_FAILURE:
+			noti.setTicker(getString(R.string.noti_fb_session_failure));
 			noti.setContentText(getString(R.string.noti_fb_session_failure));
 			
 		default:
@@ -298,7 +303,51 @@ public class LiveTrackService1 extends IntentService
 		
 		}
 		
+		noti.setSmallIcon(R.drawable.ic_notification);
+		noti.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher));
 		
+		PendingIntent notifyIntent=PendingIntent.getActivity(this, 0, new Intent(), 0);
+		
+		noti.setContentIntent(notifyIntent);
+		
+		return noti;
+	}
+	
+	private NotificationCompat.Builder GetNotificationBuilder(NotificationType type, String errorMessage)
+	{
+		NotificationCompat.Builder noti=new NotificationCompat.Builder(this);
+		noti.setContentTitle(getString(R.string.app_name));
+		noti.setAutoCancel(true);
+		
+		switch(type)
+		{
+		case LOCATION_FAILURE:
+			noti.setTicker(errorMessage);
+			noti.setContentText(errorMessage);
+			
+			break;
+			
+		case FB_POSTED:
+			noti.setTicker(errorMessage);
+			noti.setContentText(errorMessage);
+			break;
+			
+		case  FB_FAILURE:
+			noti.setTicker(errorMessage);
+			noti.setContentText(errorMessage);
+			
+			break;
+			
+		case FB_SESSION_FAILURE:
+			noti.setTicker(errorMessage);
+			noti.setContentText(errorMessage);
+			
+		default:
+			break;
+		
+		}
+		
+		noti.setSmallIcon(R.drawable.ic_notification);
 		noti.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher));
 		
 		PendingIntent notifyIntent=PendingIntent.getActivity(this, 0, new Intent(), 0);

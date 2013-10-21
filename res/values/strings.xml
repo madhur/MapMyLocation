@@ -24,6 +24,8 @@
     <string name="pref_faq_desc">FAQ about the Application</string>
     <string name="pref_faq">FAQ</string>
     <string name="pref_defautsecret">hermes</string>
+    <string name="pref_donate">Donate</string>
+    <string name="pref_donate_desc">Using secure Google Play Store in-app payment</string>
 
     
    
