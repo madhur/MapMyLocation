@@ -5,7 +5,7 @@ import in.co.madhur.mapmylocation.Consts;
 import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.preferences.Preferences;
 import in.co.madhur.mapmylocation.preferences.Preferences.Keys.*;
-import in.co.madhur.mapmylocation.service.LiveTrackService1;
+import in.co.madhur.mapmylocation.service.LiveTrackService;
 import in.co.madhur.mapmylocation.util.AppLog;
 
 import java.util.List;
@@ -482,7 +482,7 @@ public class MainActivity extends PreferenceActivity
 				
 				Intent fbIntent=new Intent();
 				fbIntent.setAction(Consts.FB_POST_ACTION);
-				fbIntent.setClass(getBaseContext(), LiveTrackService1.class);
+				fbIntent.setClass(getBaseContext(), LiveTrackService.class);
 				
 				PendingIntent fbPendingIntent=PendingIntent.getService(getBaseContext(), 0, fbIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 				
@@ -516,7 +516,7 @@ public class MainActivity extends PreferenceActivity
 			}
 		});
 		
-		/*findPreference(Preferences.Keys.ABOUT.key).setOnPreferenceClickListener(new OnPreferenceClickListener()
+		findPreference(Preferences.Keys.ABOUT.key).setOnPreferenceClickListener(new OnPreferenceClickListener()
 		{
 			
 			@Override
@@ -526,7 +526,7 @@ public class MainActivity extends PreferenceActivity
 				return true;
 				
 			}
-		});*/
+		});
 	}
 
 

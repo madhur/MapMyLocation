@@ -101,9 +101,9 @@
             android:summary="@string/pref_shareloc_desc"
             android:title="@string/pref_shareloc" />
         <Preference
-            android:key="pref_faq_desc"
-            android:summary="@string/pref_faq_desc"
-            android:title="@string/pref_faq" >
+            android:key="pref_about"
+            android:summary="@string/pref_about_desc"
+            android:title="@string/pref_about" >
         </Preference>
       
     </PreferenceCategory>

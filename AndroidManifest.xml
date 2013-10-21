@@ -59,17 +59,13 @@
         <service
             android:name=".service.SMSService"
             android:exported="false"
-            android:label="MapMyLocation SMS Service" >
+            android:label="Hermes SMS Service" >
         </service>
-         <service
+       
+        <service
             android:name=".service.LiveTrackService"
             android:exported="false"
-            android:label="MapMyLocation LiveTrack Service" >
-        </service>
-        <service
-            android:name=".service.LiveTrackService1"
-            android:exported="false"
-            android:label="MapMyLocation LiveTrack Service" >
+            android:label="Hermes LiveTrack Service" >
         </service>
          
     </application>
