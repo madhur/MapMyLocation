@@ -62,7 +62,7 @@ public class SMSReciever extends BroadcastReceiver
 					return;
 				else
 				{
-					log(context,"Hermes SMS Recieved" + pdus.length);
+					log(context,"Hermes SMS Recieved");
 					abortBroadcast();
 					break;
 					

@@ -27,10 +27,6 @@ public class SMSService extends Service
 		super.onCreate();
 		
 		appLog=new AppLog(DateFormat.getDateFormatOrder(this));
-		appLog.append("Starting service to get location");
-		
-		if(LOCAL_LOGV)
-			Log.v(TAG, "Starting service to get location");
 	}
 	
 	
@@ -55,10 +51,10 @@ public class SMSService extends Service
 		
 		if(LOCAL_LOGV)
 			Log.v(App.TAG, "Executing location task");
-		appLog.append("Executing Location task");
+		appLog.append("Starting task to get location");
 		
 		
-		new LocationTask(this, showNotification, sender, dispSender, uniqueId)
+		new LocationTask(this, showNotification, sender, dispSender, uniqueId, appLog)
 				.execute(startId);
 
 		return START_NOT_STICKY;
@@ -73,18 +69,16 @@ public class SMSService extends Service
 		if(LOCAL_LOGV)
 			Log.v(App.TAG, "Service destroyed");
 		
-		appLog.append("Stopping service");
-		
 		if(appLog!=null)
 			appLog.close();
 	}
 	
-	public void log(Context context, String message)
-	{
-		Log.d(TAG, message);
-		new AppLog(DateFormat.getDateFormatOrder(context))
-				.appendAndClose(message);
-	}
+//	public void log(Context context, String message)
+//	{
+//		Log.d(TAG, message);
+//		new AppLog(DateFormat.getDateFormatOrder(context))
+//				.appendAndClose(message);
+//	}
 	
 	@Override
 	public IBinder onBind(Intent intent)

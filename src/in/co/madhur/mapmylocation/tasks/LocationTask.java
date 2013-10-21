@@ -5,6 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import in.co.madhur.mapmylocation.App;
 import in.co.madhur.mapmylocation.Consts;
 import in.co.madhur.mapmylocation.R;
+import in.co.madhur.mapmylocation.activity.ToastActivity;
 import in.co.madhur.mapmylocation.location.Coordinates;
 import in.co.madhur.mapmylocation.location.LocationGetter;
 import in.co.madhur.mapmylocation.location.LocationResolver;
@@ -52,7 +53,7 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 	private final Object gotLocationLock = new Object();
 	private Coordinates coordinates;
 	private final LocationResult locationResult = new LocationResultChild();
-	
+	AppLog appLog;
 	//private static AtomicInteger notificationCounter;
 	
 	@Override
@@ -73,7 +74,7 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 	
 	
 	
-	public LocationTask(SMSService context, boolean showNotification, String sender, String dispSender, int msgStamp)
+	public LocationTask(SMSService context, boolean showNotification, String sender, String dispSender, int msgStamp, AppLog appLog)
 	{
 		this.context=context;		
 		this.showNotification=showNotification;
@@ -81,6 +82,7 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 		this.msgStamp=msgStamp;
 		this.notificationId=msgStamp;
 		this.dispSender=dispSender;
+		this.appLog=appLog;
 	}
 
 	@Override
@@ -106,7 +108,7 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 			if(LOCAL_LOGV)
 				Log.v(App.TAG, "PostExecute: Could not obtain location, returning");
 			
-			log(context, "PostExecute: Could not obtain location");
+			appLog.append("PostExecute: Could not obtain location");
 			
 			NotificationCompat.Builder builder=GetNotificationBuilder(sender, NotificationType.LOCATION_FAILURE);
 			
@@ -131,9 +133,9 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 						if(LOCAL_LOGV)
 							Log.v(App.TAG, "Notification for delivered: " + msgStamp);
 						NotificationCompat.Builder builder=GetNotificationBuilder(sender, NotificationType.OUTGOING_SMS);
-						
 						nm.notify((int) msgStamp, builder.build());
-
+						appLog.append("SMS sent with location");
+						
 						break;
 						
 					case Activity.RESULT_CANCELED:
@@ -141,7 +143,8 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 						break;
 						
 					default:
-						Log.v(App.TAG, String.valueOf(getResultCode()));
+						if(LOCAL_LOGV)
+							Log.v(App.TAG, String.valueOf(getResultCode()));
 						
 					}
 					
@@ -159,31 +162,19 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 					switch(getResultCode())
 					{
 					case Activity.RESULT_OK:
-						NotificationCompat.Builder builder=GetNotificationBuilder(sender, NotificationType.OUTGOING_SMS);
 						if(LOCAL_LOGV)
 							Log.v(App.TAG, "Notification for sent: " + msgStamp);
-						nm.notify((int) msgStamp, builder.build());
 						break;
 						
 					case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-						
-						break;
-						
 					case SmsManager.RESULT_ERROR_NO_SERVICE:
-						
-						break;
-
 					case SmsManager.RESULT_ERROR_NULL_PDU:
-						
-						break;
-
 					case SmsManager.RESULT_ERROR_RADIO_OFF:
+						appLog.append("Error sending SMS. Result code: " + getResultCode());
 					
 					break;
 					
 					default:
-						Log.v(App.TAG, String.valueOf(getResultCode()));
-
 					
 					}
 					
@@ -226,7 +217,7 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 						
 						
 						Looper.prepare();
-						LocationResolver locationResolver = new LocationResolver(context);
+						LocationResolver locationResolver = new LocationResolver(context, appLog);
 						locationResolver.prepare();
 						locationResolver.getLocation(context, locationResult, updateTimeoutPar);
 						Looper.loop();
@@ -283,12 +274,12 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 		
 	}
 	
-	private void log(Context context, String message)
-	{
-		Log.d(TAG, message);
-			new AppLog(DateFormat.getDateFormatOrder(context))
-					.appendAndClose(message);
-	}
+//	private void log(Context context, String message)
+//	{
+//		Log.d(TAG, message);
+//			new AppLog(DateFormat.getDateFormatOrder(context))
+//					.appendAndClose(message);
+//	}
 
 	
 	private NotificationCompat.Builder GetNotificationBuilder(String sender, NotificationType type)
@@ -296,23 +287,25 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 		NotificationCompat.Builder noti=new NotificationCompat.Builder(context);
 		noti.setContentTitle(dispSender);
 		noti.setAutoCancel(true);
+		String contentText = null;
 		
 		switch(type)
 		{
 		case INCOMING_SMS:
+			contentText=context.getString(R.string.noti_loc_request);
 			noti.setTicker(dispSender+": "+context.getString(R.string.noti_loc_request));		
-			noti.setContentText(context.getString(R.string.noti_loc_response));
 			
 			break;
 			
 		case OUTGOING_SMS:
+			contentText=context.getString(R.string.noti_loc_response);
 			noti.setTicker(dispSender+": "+context.getString(R.string.noti_loc_response));		
-			noti.setContentText(context.getString(R.string.noti_loc_response));
+			
 			break;
 			
 		case  LOCATION_FAILURE:
+			contentText=context.getString(R.string.noti_loc_failure);
 			noti.setTicker(dispSender+": "+context.getString(R.string.noti_loc_failure));		
-			noti.setContentText(context.getString(R.string.noti_loc_failure));
 			
 			break;
 			
@@ -321,12 +314,15 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 		
 		}
 		
-		
+		noti.setContentText(contentText);
 		noti.setSmallIcon(R.drawable.ic_notification);
 				
 		noti.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
 		
-		PendingIntent notifyIntent=PendingIntent.getActivity(context, 0, new Intent(), 0);
+		Intent toastIntent=new Intent();
+		toastIntent.putExtra("message", contentText);
+		toastIntent.setClass(context, ToastActivity.class);
+		PendingIntent notifyIntent=PendingIntent.getActivity(context, 0, toastIntent, 0);
 		
 		noti.setContentIntent(notifyIntent);
 		

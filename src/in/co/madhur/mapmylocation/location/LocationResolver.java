@@ -31,6 +31,7 @@ public class LocationResolver
 	private boolean networkEnabled = false;
 	private Handler locationTimeoutHandler;
 	private Context context;
+	private AppLog appLog;
 
 	private final Callback locationTimeoutCallback = new Callback()
 	{
@@ -52,16 +53,16 @@ public class LocationResolver
 			{
 				if(LOCAL_LOGV)
 					Log.v(TAG, "Got last location from both GPS and network");
-				log(context, "Got last location from both GPS and network");
+				appLog.append("Retrieved last location from both GPS and network");
 				
 				if (gpsLocation.getTime() > networkLocation.getTime())
 				{
-					log(context, "Returning GPS location");
+					appLog.append("Using GPS location");
 					locationResult.gotLocation(gpsLocation);
 				}
 				else
 				{
-					log(context, "Returning network location");
+					appLog.append("Using network location");
 					locationResult.gotLocation(networkLocation);
 				}
 				return;
@@ -72,7 +73,7 @@ public class LocationResolver
 			{
 				if(LOCAL_LOGV)
 					Log.v(TAG, "Returning GPS last location");
-				log(context, "Returning last GPS location");
+				appLog.append("Using last GPS location");
 				locationResult.gotLocation(gpsLocation);
 				return;
 				
@@ -82,7 +83,7 @@ public class LocationResolver
 			if (networkLocation != null)
 			{
 				Log.v(TAG, "Returning network last location");
-				log(context, "Returning last network location");
+				appLog.append("Using last network location");
 				
 				locationResult.gotLocation(networkLocation);
 				return;
@@ -91,7 +92,7 @@ public class LocationResolver
 			if(LOCAL_LOGV)
 				Log.v(TAG, "Could not find any location");
 			
-			log(context, "Could not retrieve last location as well");
+			appLog.append("Failure: Retrieving last locations.");
 			
 			// We could not find out the location
 			locationResult.gotLocation(null);
@@ -104,6 +105,7 @@ public class LocationResolver
 				Log.v(TAG, "Executing handle message in Thread Name: " + Thread.currentThread().getName()
 					+ "Thread ID: " + Thread.currentThread().getId());
 
+			appLog.append("Timeout retrieving location through listeners. Fallback to last location");
 			locationTimeoutFunc();
 			return true;
 		}
@@ -123,7 +125,7 @@ public class LocationResolver
 				Log.v(TAG, "Got GPS location");
 			}
 			
-			log(context, "Retrieved location through GPS");
+			appLog.append("Retrieved location through GPS");
 			
 			timer.cancel();
 			locationResult.gotLocation(location);
@@ -133,17 +135,14 @@ public class LocationResolver
 
 		public void onProviderDisabled(String provider)
 		{
-			log(context, "GPS provider is disabled");
 		}
 
 		public void onProviderEnabled(String provider)
 		{
-			log(context, "GPS provider is enabled");
 		}
 
 		public void onStatusChanged(String provider, int status, Bundle extras)
 		{
-			log(context, "GPS provider status is changed");
 		}
 	};
 	
@@ -160,7 +159,7 @@ public class LocationResolver
 				Log.v(TAG, "Got network location");
 			}
 
-			log(context, "Got location fix through network");
+			appLog.append("Retrieved location through network");
 			timer.cancel();
 			locationResult.gotLocation(location);
 			locationManager.removeUpdates(this);
@@ -169,23 +168,22 @@ public class LocationResolver
 
 		public void onProviderDisabled(String provider)
 		{
-			log(context, "Network provider is disabled");
 		}
 
 		public void onProviderEnabled(String provider)
 		{
-			log(context, "Network provider is enabled");
 		}
 
 		public void onStatusChanged(String provider, int status, Bundle extras)
 		{
-			log(context, "Netowrk provider status is changed");
 		}
 	};
 
-	public LocationResolver(Context context2)
+	public LocationResolver(Context context2, AppLog appLog)
 	{
 		this.context=context2;
+		this.appLog=appLog;
+		
 	}
 
 	public void prepare()
@@ -224,7 +222,8 @@ public class LocationResolver
 		// don't start listeners if no provider is enabled
 		if (!gpsEnabled && !networkEnabled)
 		{
-			Log.v("Tag", "No Provider is enabled");
+			Log.v(TAG, "No Provider is enabled");
+			appLog.append("None of the providers are enabled");
 			return false;
 			
 		}
@@ -253,11 +252,11 @@ public class LocationResolver
 	}
 
 	
-	private void log(Context context, String message)
-	{
-		Log.d(TAG, message);
-			new AppLog(DateFormat.getDateFormatOrder(context))
-					.appendAndClose(message);
-	}
+//	private void log(Context context, String message)
+//	{
+//		Log.d(TAG, message);
+//			new AppLog(DateFormat.getDateFormatOrder(context))
+//					.appendAndClose(message);
+//	}
 	
 }

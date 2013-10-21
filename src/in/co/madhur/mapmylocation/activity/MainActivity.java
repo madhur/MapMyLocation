@@ -7,6 +7,7 @@ import in.co.madhur.mapmylocation.preferences.Preferences;
 import in.co.madhur.mapmylocation.preferences.Preferences.Keys.*;
 import in.co.madhur.mapmylocation.service.LiveTrackService;
 import in.co.madhur.mapmylocation.util.AppLog;
+import in.co.madhur.mapmylocation.util.Util;
 
 import java.util.List;
 
@@ -108,9 +109,20 @@ public class MainActivity extends PreferenceActivity
 		UpdateLiveTrackEnabled(null);
 		
 		UpdateFBFriendsLabel(null);
+		
+		CheckLocation();
 	}
 	
 	
+	private void CheckLocation()
+	{
+		boolean locationEnabled=Util.isLocationEnabled(this);
+		if(!locationEnabled)
+			show(Dialogs.NO_PROVIDER_ENABLED);
+		
+	}
+
+
 	private void UpdateTrackMeEnabled(Boolean enabledTrackme)
 	{
 		Preference settingsTrackme=findPreference(Preferences.Keys.SETTINGS_TRACKME.key);
@@ -479,6 +491,7 @@ public class MainActivity extends PreferenceActivity
 				UpdateLiveTrackEnabled(newVal);
 				AlarmManager alarmManager=(AlarmManager) getSystemService(ALARM_SERVICE);
 				int recurTime=appPreferences.getFBInterval();
+				long recurInterval=recurTime*1000;
 				
 				Intent fbIntent=new Intent();
 				fbIntent.setAction(Consts.FB_POST_ACTION);
@@ -489,8 +502,8 @@ public class MainActivity extends PreferenceActivity
 				if(newVal)
 				{
 					
-					alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 10000, 10000, fbPendingIntent );
-					Log.v(App.TAG, "Scheduling FB Posts" );
+					alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 10000, recurInterval, fbPendingIntent );
+					Log.v(App.TAG, "Scheduling FB Posts at" +String.valueOf(recurInterval) );
 				}
 				else
 				{

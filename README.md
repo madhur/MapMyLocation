@@ -2,7 +2,7 @@
 
 Hermes is an attempt to provide a sense of security to all the travelers of all over the world and especially the women in India who use the public transport to commute to their work place and back home.
 
-[Hermes](http://en.wikipedia.org/wiki/Hermes)"</a> is an olympian god in Greek mythology an dis protector and patron of travelers. The application lets a commuter be tracked while on the road, posting the whereabouts at regular intervals on popular social network. The posts are secured and are visible to only those whom the commuter has provided permissions to view.
+Hermes is an application that lets a commuter be tracked while on the road, posting the whereabouts at regular intervals on popular social network. The posts are secured and are visible to only those whom the commuter has provided permissions to view. It also enables your friends and family to know your whereabouts by sending you a SMS containing a secret code.
 
 Hermes is available for free in the Google Play Store, there will never be a pro / paid version.
 
@@ -17,7 +17,7 @@ The application consists of two main features:
 ###TrackMe
 Track Me enables your friends and family to locate you easily. They just need to send you a SMS containing a secret code ("hermes" by default). Upon receipt of this SMS, the application automatically sends a SMS reply to the sender containing the Google Maps link of your location.
 
-## Live Track
+### Live Track
 LiveTrack enables you to automatically publish your location on Facebook at regular intervals tagged ONLY to your friends and families. You just need to connect to Facebook and specify which specific 
 friends in your friend list will be able to see the posted location on your timeline.
 

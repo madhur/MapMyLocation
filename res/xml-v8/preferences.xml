@@ -29,10 +29,10 @@
                 android:title="@string/pref_onlyallowcontacts" >
             </CheckBoxPreference>
 
-            <Preference
-                android:key="pref_selectcontacts"
-                android:summary="@string/pref_selectcontacts_desc"
-                android:title="@string/pref_selectcontacts" />
+<!--             <Preference -->
+<!--                 android:key="pref_selectcontacts" -->
+<!--                 android:summary="@string/pref_selectcontacts_desc" -->
+<!--                 android:title="@string/pref_selectcontacts" /> -->
 
             <!--  <ListPreference
                 android:defaultValue="300"
