@@ -50,6 +50,7 @@
     <string name="pref_livetrack_shownotification_desc">Notification will be displayed whenever location is posted on your timeline</string>
     <string name="pref_shareloc">Share location</string>
     <string name="pref_shareloc_desc">Share location instantly to your friends</string>
+    <string name="pref_emptysecret_msg">Empty secret code is not allowed</string>
     
     <string name="noti_loc_request">Location requested</string>
     <string name="noti_loc_response">Location sent</string>
@@ -69,5 +70,9 @@
  	  <string name="fb_needs_connecting">Tap to connect your Facebook account (required).</string>
  	  <string name="fb_already_connected">Connected</string>
  	  <string name="exception">Exception: %1$s</string>
+ 	  
+ 	  <string name="action_addfriend">Add friend</string>
+ 	  <string name="action_removefriend">Remove friend</string>
+ 	  <string name="action_done">Done</string>
  	  
 </resources>

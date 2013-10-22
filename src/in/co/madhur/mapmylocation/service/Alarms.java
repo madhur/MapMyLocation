@@ -37,7 +37,7 @@ public class Alarms
 	
 	private static AlarmManager GetAlarmManager(Context context)
 	{
-		return (AlarmManager)context.getSystemService(context.ALARM_SERVICE);
+		return (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
 		
 	}
 	

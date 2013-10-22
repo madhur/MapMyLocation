@@ -232,6 +232,9 @@ public class MainActivity extends PreferenceActivity
 				}
 			}).create();
 			
+		case EMPTY_SECRET:
+			return new AlertDialog.Builder(this).setMessage(R.string.pref_emptysecret_msg).setTitle(R.string.app_name).setPositiveButton(android.R.string.ok, null).create();
+			
 		default:
 			return null;
 		}
@@ -421,6 +424,24 @@ public class MainActivity extends PreferenceActivity
 				Alarms alarms=new Alarms(MainActivity.this, appPreferences);
 				alarms.cancel();
 				alarms.Schedule();
+				return true;
+			}
+		});
+		
+		
+		findPreference(Preferences.Keys.SECRET_CODE.key).setOnPreferenceChangeListener(new OnPreferenceChangeListener()
+		{
+			
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue)
+			{
+				String newSecret=(String) newValue;
+				
+				if(TextUtils.isEmpty(newSecret))
+				{
+					show(Dialogs.EMPTY_SECRET);
+					return false;
+				}
 				return true;
 			}
 		});

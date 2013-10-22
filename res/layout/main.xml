@@ -20,18 +20,20 @@
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
         >
-    <Button
-            android:id="@+id/pickFriendsButton"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="Pick Friends"
-            />
-    <TextView
-            android:id="@+id/resultsTextView"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#FFFFFF"
-            />
+<!--     <Button -->
+<!--             android:id="@+id/pickFriendsButton" -->
+<!--             android:layout_width="fill_parent" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:text="Pick Friends" -->
+<!--             /> -->
+<!--     <TextView -->
+<!--             android:id="@+id/resultsTextView" -->
+<!--             android:layout_width="fill_parent" -->
+<!--             android:layout_height="wrap_content" -->
+<!--             android:textColor="#FFFFFF" -->
+<!--             /> -->
+    
+    <ListView android:id="@+id/listview" android:layout_height="fill_parent" android:layout_width="fill_parent" android:choiceMode="multipleChoice"></ListView>
 
 </LinearLayout>
 

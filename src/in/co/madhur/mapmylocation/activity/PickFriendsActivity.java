@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.view.Window;
 import android.widget.Toast;
 import com.facebook.FacebookException;
 import com.facebook.widget.FriendPickerFragment;
@@ -42,20 +43,18 @@ public class PickFriendsActivity extends FragmentActivity
 	// parameters; our needs
 	// are simple, so we just populate what we want to pass to the
 	// FriendPickerFragment.
-	public static void populateParameters(Intent intent, String userId,
-			boolean multiSelect, boolean showTitleBar)
+	public static void populateParameters(Intent intent, String userId, boolean multiSelect, boolean showTitleBar)
 	{
 		intent.putExtra(FriendPickerFragment.USER_ID_BUNDLE_KEY, userId);
-		intent.putExtra(FriendPickerFragment.MULTI_SELECT_BUNDLE_KEY,
-				multiSelect);
-		intent.putExtra(FriendPickerFragment.SHOW_TITLE_BAR_BUNDLE_KEY,
-				showTitleBar);
+		intent.putExtra(FriendPickerFragment.MULTI_SELECT_BUNDLE_KEY, multiSelect);
+		intent.putExtra(FriendPickerFragment.SHOW_TITLE_BAR_BUNDLE_KEY, showTitleBar);
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.pick_friends_activity);
 
 		FragmentManager fm = getSupportFragmentManager();
@@ -65,9 +64,7 @@ public class PickFriendsActivity extends FragmentActivity
 			// First time through, we create our fragment programmatically.
 			final Bundle args = getIntent().getExtras();
 			friendPickerFragment = new FriendPickerFragment(args);
-			fm.beginTransaction()
-					.add(R.id.friend_picker_fragment, friendPickerFragment)
-					.commit();
+			fm.beginTransaction().add(R.id.friend_picker_fragment, friendPickerFragment).commit();
 		}
 		else
 		{
@@ -77,37 +74,32 @@ public class PickFriendsActivity extends FragmentActivity
 			// fact, this might be
 			// incorrect if the fragment was modified programmatically since it
 			// was created.)
-			friendPickerFragment = (FriendPickerFragment) fm
-					.findFragmentById(R.id.friend_picker_fragment);
+			friendPickerFragment = (FriendPickerFragment) fm.findFragmentById(R.id.friend_picker_fragment);
 		}
 
-		friendPickerFragment
-				.setOnErrorListener(new PickerFragment.OnErrorListener()
-				{
-					@Override
-					public void onError(PickerFragment<?> fragment,
-							FacebookException error)
-					{
-						PickFriendsActivity.this.onError(error);
-					}
-				});
+		friendPickerFragment.setOnErrorListener(new PickerFragment.OnErrorListener()
+		{
+			@Override
+			public void onError(PickerFragment<?> fragment, FacebookException error)
+			{
+				PickFriendsActivity.this.onError(error);
+			}
+		});
 
-		friendPickerFragment
-				.setOnDoneButtonClickedListener(new PickerFragment.OnDoneButtonClickedListener()
-				{
-					@Override
-					public void onDoneButtonClicked(PickerFragment<?> fragment)
-					{
-						// We just store our selection in the Application for
-						// other activities to look at.
-						App application = (App) getApplication();
-						application.setSelectedUsers(friendPickerFragment
-								.getSelection());
+		friendPickerFragment.setOnDoneButtonClickedListener(new PickerFragment.OnDoneButtonClickedListener()
+		{
+			@Override
+			public void onDoneButtonClicked(PickerFragment<?> fragment)
+			{
+				// We just store our selection in the Application for
+				// other activities to look at.
+				App application = (App) getApplication();
+				application.setSelectedUsers(friendPickerFragment.getSelection());
 
-						setResult(RESULT_OK, null);
-						finish();
-					}
-				});
+				setResult(RESULT_OK, null);
+				finish();
+			}
+		});
 	}
 
 	private void onError(Exception error)
