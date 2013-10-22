@@ -23,8 +23,7 @@
     </string-array>
      
     <string-array name="pref_fbinterval">
-        <item>5 mins</item>
-        <item>10 mins</item>
+        <item>15 mins</item>
         <item>30 mins</item>
         <item>1 hour</item>
         <item>6 hours</item>
@@ -33,8 +32,7 @@
     </string-array>
     
         <string-array name="pref_fbinterval_values">
-        <item>300</item>
-        <item>600</item>
+        <item>900</item>
         <item>1800</item>
         <item>3600</item>
         <item>21600</item>

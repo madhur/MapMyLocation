@@ -1,8 +1,10 @@
 package in.co.madhur.mapmylocation.activity;
 
+import in.co.madhur.mapmylocation.App;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 public class ToastActivity extends Activity
@@ -13,7 +15,7 @@ public class ToastActivity extends Activity
 	{
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		
+		Log.v(App.TAG, "Starting toast");
 		Intent notiIntent=getIntent();
 		if(notiIntent!=null)
 		{

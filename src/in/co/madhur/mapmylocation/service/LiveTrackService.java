@@ -8,7 +8,6 @@ import java.util.List;
 import in.co.madhur.mapmylocation.App;
 import in.co.madhur.mapmylocation.Consts;
 import in.co.madhur.mapmylocation.R;
-import in.co.madhur.mapmylocation.activity.ToastActivity;
 import in.co.madhur.mapmylocation.location.Coordinates;
 import in.co.madhur.mapmylocation.location.LocationResolver;
 import in.co.madhur.mapmylocation.location.LocationResult;
@@ -17,6 +16,7 @@ import in.co.madhur.mapmylocation.tasks.LocationTask;
 import in.co.madhur.mapmylocation.tasks.NotificationType;
 import in.co.madhur.mapmylocation.tasks.LocationTask.LocationResultChild;
 import in.co.madhur.mapmylocation.util.AppLog;
+import in.co.madhur.mapmylocation.activity.ToastActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -87,7 +87,8 @@ public class LiveTrackService extends IntentService
 			return;
 
 		// Check if Facebook is connected. If not, post a notification to
-		// TODO: connect to Facebook. This should open the app, instead of dismissing
+		// TODO: connect to Facebook. This should open the app, instead of
+		// dismissing
 		boolean fbConnected = appPrefences.isFBConnected();
 		if (!fbConnected)
 		{
@@ -95,7 +96,7 @@ public class LiveTrackService extends IntentService
 
 			if (showNotification)
 			{
-				NotificationCompat.Builder builder = GetNotificationBuilder(NotificationType.FB_NOT_CONNECTED);
+				NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.FB_NOT_CONNECTED);
 				nm.notify(0, builder.build());
 			}
 
@@ -110,7 +111,7 @@ public class LiveTrackService extends IntentService
 			appLog.append("Failure: Facebook Session while posting");
 			if (showNotification)
 			{
-				NotificationCompat.Builder builder = GetNotificationBuilder(NotificationType.FB_SESSION_FAILURE);
+				NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.FB_SESSION_FAILURE);
 				nm.notify(0, builder.build());
 			}
 
@@ -118,15 +119,14 @@ public class LiveTrackService extends IntentService
 			return;
 		}
 
-		Coordinates result = getLocation(Consts.MAX_WAIT_TIME,
-				Consts.UPDATE_TIMEOUT);
+		Coordinates result = getLocation(Consts.MAX_WAIT_TIME, Consts.UPDATE_TIMEOUT);
 
 		if (result == null)
 		{
 			appLog.append("Failure: Retrieving location while posting");
 			if (showNotification)
 			{
-				NotificationCompat.Builder builder = GetNotificationBuilder(NotificationType.LOCATION_FAILURE);
+				NotificationCompat.Builder builder = new Notifications(this).GetNotificationBuilder(this, NotificationType.LOCATION_FAILURE);
 				nm.notify(0, builder.build());
 			}
 
@@ -134,8 +134,7 @@ public class LiveTrackService extends IntentService
 			return;
 		}
 
-		String fbUrl = String.format(Consts.GOOGLE_MAPS_URL,
-				location.getLatitude(), location.getLongitude());
+		String fbUrl = String.format(Consts.GOOGLE_MAPS_URL, location.getLatitude(), location.getLongitude());
 		String fbMessage = appPrefences.getFBMessage();
 		String fbPrivacy = appPrefences.getFBFriends();
 
@@ -150,15 +149,14 @@ public class LiveTrackService extends IntentService
 			Log.e(App.TAG, e.getMessage());
 		}
 
-		Response fbResponse = PostToFB(session, fbMessage, privacyOptions,
-				fbUrl);
+		Response fbResponse = PostToFB(session, fbMessage, privacyOptions, fbUrl);
 
 		if (fbResponse.getError() == null)
 		{
 
 			if (showNotification)
 			{
-				NotificationCompat.Builder builder = GetNotificationBuilder(NotificationType.FB_POSTED);
+				NotificationCompat.Builder builder = new Notifications(this).GetNotificationBuilder(this, NotificationType.FB_POSTED);
 				nm.notify(0, builder.build());
 			}
 		}
@@ -167,9 +165,7 @@ public class LiveTrackService extends IntentService
 			appLog.append(fbResponse.getError().getErrorMessage());
 			if (showNotification)
 			{
-				NotificationCompat.Builder builder = GetNotificationBuilder(
-						NotificationType.FB_FAILURE, fbResponse.getError()
-								.getErrorMessage());
+				NotificationCompat.Builder builder = new Notifications(this).GetNotificationBuilder(this, NotificationType.FB_FAILURE, fbResponse.getError().getErrorMessage());
 				nm.notify(0, builder.build());
 			}
 		}
@@ -201,8 +197,7 @@ public class LiveTrackService extends IntentService
 
 	}
 
-	private Response PostToFB(Session session, String message,
-			JSONObject privacyOptions, String locationUrl)
+	private Response PostToFB(Session session, String message, JSONObject privacyOptions, String locationUrl)
 	{
 		GraphObject graphObject = GraphObject.Factory.create();
 
@@ -211,17 +206,16 @@ public class LiveTrackService extends IntentService
 		graphObject.setProperty("link", locationUrl);
 		graphObject.setProperty("privacy", privacyOptions.toString());
 
-		Request myRequest = Request.newPostRequest(session, "/me/feed/",
-				graphObject, new Callback()
-				{
+		Request myRequest = Request.newPostRequest(session, "/me/feed/", graphObject, new Callback()
+		{
 
-					@Override
-					public void onCompleted(Response response)
-					{
-						Log.v("Tag", response.toString());
+			@Override
+			public void onCompleted(Response response)
+			{
+				Log.v("Tag", response.toString());
 
-					}
-				});
+			}
+		});
 
 		Response fbResponse = null;
 		try
@@ -237,8 +231,7 @@ public class LiveTrackService extends IntentService
 		return fbResponse;
 	}
 
-	private synchronized Coordinates getLocation(int maxWaitingTime,
-			int updateTimeout)
+	private synchronized Coordinates getLocation(int maxWaitingTime, int updateTimeout)
 	{
 		try
 		{
@@ -263,11 +256,9 @@ public class LiveTrackService extends IntentService
 						}
 
 						Looper.prepare();
-						LocationResolver locationResolver = new LocationResolver(
-								LiveTrackService.this, appLog);
+						LocationResolver locationResolver = new LocationResolver(LiveTrackService.this, appLog);
 						locationResolver.prepare();
-						locationResolver.getLocation(LiveTrackService.this,
-								locationResult, updateTimeoutPar);
+						locationResolver.getLocation(LiveTrackService.this, locationResult, updateTimeoutPar);
 						Looper.loop();
 					}
 				}.start();
@@ -281,8 +272,7 @@ public class LiveTrackService extends IntentService
 		}
 
 		if (location != null)
-			coordinates = new Coordinates(location.getLatitude(),
-					location.getLongitude());
+			coordinates = new Coordinates(location.getLatitude(), location.getLongitude());
 		else
 			coordinates = Coordinates.UNDEFINED;
 		return coordinates;
@@ -304,86 +294,6 @@ public class LiveTrackService extends IntentService
 
 		}
 
-	}
-
-	private NotificationCompat.Builder GetNotificationBuilder(
-			NotificationType type)
-	{
-		NotificationCompat.Builder noti = new NotificationCompat.Builder(this);
-		noti.setContentTitle(getString(R.string.app_name));
-		noti.setAutoCancel(true);
-		String contentText = null;
-		
-		switch (type)
-		{
-		case LOCATION_FAILURE:
-			contentText=getString(R.string.noti_loc_failure);
-
-			break;
-
-		case FB_POSTED:
-			contentText=getString(R.string.noti_fb_posted);
-			break;
-
-		case FB_FAILURE:
-			contentText=getString(R.string.noti_fb_failure);
-
-			break;
-
-		case FB_SESSION_FAILURE:
-			contentText=getString(R.string.noti_fb_session_failure);
-
-		case FB_NOT_CONNECTED:
-			contentText=getString(R.string.noti_fb_not_connected);
-			
-			
-		default:
-			break;
-
-		}
-		
-		noti.setTicker(contentText);
-		noti.setContentText(contentText);
-
-		noti.setSmallIcon(R.drawable.ic_notification);
-		noti.setLargeIcon(BitmapFactory.decodeResource(getResources(),
-				R.drawable.ic_launcher));
-
-		Intent toastIntent=new Intent();
-		toastIntent.putExtra("message", contentText);
-		toastIntent.setClass(this, ToastActivity.class);
-		
-		PendingIntent notifyIntent = PendingIntent.getActivity(this, 0,
-				toastIntent, 0);
-
-		noti.setContentIntent(notifyIntent);
-
-		return noti;
-	}
-
-	private NotificationCompat.Builder GetNotificationBuilder(
-			NotificationType type, String errorMessage)
-	{
-		NotificationCompat.Builder noti = new NotificationCompat.Builder(this);
-		noti.setContentTitle(getString(R.string.app_name));
-		noti.setAutoCancel(true);
-
-	
-		noti.setSmallIcon(R.drawable.ic_notification);
-		noti.setLargeIcon(BitmapFactory.decodeResource(getResources(),
-				R.drawable.ic_launcher));
-
-		Intent toastIntent=new Intent();
-		toastIntent.putExtra("message", errorMessage);
-		toastIntent.setClass(this, ToastActivity.class);
-		
-		
-		PendingIntent notifyIntent = PendingIntent.getActivity(this, 0,
-				toastIntent, 0);
-
-		noti.setContentIntent(notifyIntent);
-
-		return noti;
 	}
 
 }

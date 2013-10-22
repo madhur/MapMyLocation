@@ -5,13 +5,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import in.co.madhur.mapmylocation.App;
 import in.co.madhur.mapmylocation.Consts;
 import in.co.madhur.mapmylocation.R;
-import in.co.madhur.mapmylocation.activity.ToastActivity;
 import in.co.madhur.mapmylocation.location.Coordinates;
 import in.co.madhur.mapmylocation.location.LocationGetter;
 import in.co.madhur.mapmylocation.location.LocationResolver;
 import in.co.madhur.mapmylocation.location.LocationResult;
+import in.co.madhur.mapmylocation.service.Notifications;
 import in.co.madhur.mapmylocation.service.SMSService;
 import in.co.madhur.mapmylocation.util.AppLog;
+import in.co.madhur.mapmylocation.activity.ToastActivity;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -65,7 +66,7 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 		{
 			NotificationManager nm=(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 			
-			NotificationCompat.Builder builder=GetNotificationBuilder(sender , NotificationType.INCOMING_SMS);
+			NotificationCompat.Builder builder=Notifications.GetNotificationBuilderSMS(context, sender , NotificationType.INCOMING_SMS);
 			
 			nm.notify((int) msgStamp, builder.build());
 			
@@ -110,7 +111,7 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 			
 			appLog.append("PostExecute: Could not obtain location");
 			
-			NotificationCompat.Builder builder=GetNotificationBuilder(sender, NotificationType.LOCATION_FAILURE);
+			NotificationCompat.Builder builder=Notifications.GetNotificationBuilderSMS(context, dispSender, NotificationType.LOCATION_FAILURE);
 			
 			if(LOCAL_LOGV)
 				Log.v(App.TAG, "Notification for failure: " + msgStamp);
@@ -132,7 +133,7 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 					case Activity.RESULT_OK:
 						if(LOCAL_LOGV)
 							Log.v(App.TAG, "Notification for delivered: " + msgStamp);
-						NotificationCompat.Builder builder=GetNotificationBuilder(sender, NotificationType.OUTGOING_SMS);
+						NotificationCompat.Builder builder=Notifications.GetNotificationBuilderSMS(context, dispSender, NotificationType.OUTGOING_SMS);
 						nm.notify((int) msgStamp, builder.build());
 						appLog.append("SMS sent with location");
 						
@@ -282,52 +283,6 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 //	}
 
 	
-	private NotificationCompat.Builder GetNotificationBuilder(String sender, NotificationType type)
-	{
-		NotificationCompat.Builder noti=new NotificationCompat.Builder(context);
-		noti.setContentTitle(dispSender);
-		noti.setAutoCancel(true);
-		String contentText = null;
-		
-		switch(type)
-		{
-		case INCOMING_SMS:
-			contentText=context.getString(R.string.noti_loc_request);
-			noti.setTicker(dispSender+": "+context.getString(R.string.noti_loc_request));		
-			
-			break;
-			
-		case OUTGOING_SMS:
-			contentText=context.getString(R.string.noti_loc_response);
-			noti.setTicker(dispSender+": "+context.getString(R.string.noti_loc_response));		
-			
-			break;
-			
-		case  LOCATION_FAILURE:
-			contentText=context.getString(R.string.noti_loc_failure);
-			noti.setTicker(dispSender+": "+context.getString(R.string.noti_loc_failure));		
-			
-			break;
-			
-		default:
-			break;
-		
-		}
-		
-		noti.setContentText(contentText);
-		noti.setSmallIcon(R.drawable.ic_notification);
-				
-		noti.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
-		
-		Intent toastIntent=new Intent();
-		toastIntent.putExtra("message", contentText);
-		toastIntent.setClass(context, ToastActivity.class);
-		PendingIntent notifyIntent=PendingIntent.getActivity(context, 0, toastIntent, 0);
-		
-		noti.setContentIntent(notifyIntent);
-		
-		return noti;
-	}
 	
 	
 }

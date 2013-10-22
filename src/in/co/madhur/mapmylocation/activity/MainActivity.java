@@ -5,6 +5,7 @@ import in.co.madhur.mapmylocation.Consts;
 import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.preferences.Preferences;
 import in.co.madhur.mapmylocation.preferences.Preferences.Keys.*;
+import in.co.madhur.mapmylocation.service.Alarms;
 import in.co.madhur.mapmylocation.service.LiveTrackService;
 import in.co.madhur.mapmylocation.util.AppLog;
 import in.co.madhur.mapmylocation.util.Util;
@@ -36,6 +37,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
 
+import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
+import static in.co.madhur.mapmylocation.App.TAG;
 
 public class MainActivity extends PreferenceActivity
 {
@@ -277,12 +280,28 @@ public class MainActivity extends PreferenceActivity
 	private void UpdateFBConnected()
 	{
 		CheckBoxPreference fbConnected=(CheckBoxPreference) findPreference(Preferences.Keys.CONNECT_FB.key);
-		Session fbSession=Session.getActiveSession();
+		
+		Session fbSession = Session.openActiveSessionFromCache(this);
+
+		if (fbSession == null)
+			fbSession = Session.getActiveSession();
 		
 		if(fbSession!=null && fbSession.isOpened())
 			fbConnected.setChecked(true);
 		else
+		{
+			if(fbSession!=null)
+			{
+			Log.v(TAG, fbSession.getState().toString());
+			
+			}
+			else
+			{
+				Log.v(TAG, "session is null, removing checkbox");
+				
+			}
 			fbConnected.setChecked(false);
+		}
 
 		
 		String summary;
@@ -364,25 +383,25 @@ public class MainActivity extends PreferenceActivity
 		
 	}
 	
-	private void UpdateMaxRateLabel(String rate )
-	{
-		ListPreference MaxRateInterval=(ListPreference) findPreference(Preferences.Keys.MAX_RATE.key);
-		if(rate==null)
-		{								
-			MaxRateInterval.setTitle(MaxRateInterval.getEntry());					
-			
-		}
-		else
-		{
-			int index=MaxRateInterval.findIndexOfValue(rate);
-			if(index!=-1)
-			{
-				rate=(String) MaxRateInterval.getEntries()[index];
-				MaxRateInterval.setTitle(rate);
-			}
-		}
-		
-	}
+//	private void UpdateMaxRateLabel(String rate )
+//	{
+//		ListPreference MaxRateInterval=(ListPreference) findPreference(Preferences.Keys.MAX_RATE.key);
+//		if(rate==null)
+//		{								
+//			MaxRateInterval.setTitle(MaxRateInterval.getEntry());					
+//			
+//		}
+//		else
+//		{
+//			int index=MaxRateInterval.findIndexOfValue(rate);
+//			if(index!=-1)
+//			{
+//				rate=(String) MaxRateInterval.getEntries()[index];
+//				MaxRateInterval.setTitle(rate);
+//			}
+//		}
+//		
+//	}
 	
 	
 	private void SetListeners()
@@ -399,6 +418,9 @@ public class MainActivity extends PreferenceActivity
 				
 				
 				UpdateFBIntervalLabel(newValue.toString());
+				Alarms alarms=new Alarms(MainActivity.this, appPreferences);
+				alarms.cancel();
+				alarms.Schedule();
 				return true;
 			}
 		});
@@ -489,25 +511,18 @@ public class MainActivity extends PreferenceActivity
 			{
 				boolean newVal=(Boolean) newValue;
 				UpdateLiveTrackEnabled(newVal);
-				AlarmManager alarmManager=(AlarmManager) getSystemService(ALARM_SERVICE);
-				int recurTime=appPreferences.getFBInterval();
-				long recurInterval=recurTime*1000;
 				
-				Intent fbIntent=new Intent();
-				fbIntent.setAction(Consts.FB_POST_ACTION);
-				fbIntent.setClass(getBaseContext(), LiveTrackService.class);
 				
-				PendingIntent fbPendingIntent=PendingIntent.getService(getBaseContext(), 0, fbIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+				
 				
 				if(newVal)
 				{
-					
-					alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 10000, recurInterval, fbPendingIntent );
-					Log.v(App.TAG, "Scheduling FB Posts at" +String.valueOf(recurInterval) );
+					new Alarms(MainActivity.this, appPreferences).Schedule();	
+					Log.v(App.TAG, "Scheduling FB Posts at");
 				}
 				else
 				{
-					alarmManager.cancel(fbPendingIntent);
+					new Alarms(MainActivity.this, appPreferences).cancel();
 					Log.v(App.TAG, "Cancelled live track service" );
 				}
 				return true;
@@ -521,11 +536,7 @@ public class MainActivity extends PreferenceActivity
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue)
 			{
-				boolean newVal=(Boolean) newValue;
-				findPreference(Preferences.Keys.SELECT_CONTACTS.key).setEnabled(newVal);
-				
 				return true;
-					
 			}
 		});
 		
