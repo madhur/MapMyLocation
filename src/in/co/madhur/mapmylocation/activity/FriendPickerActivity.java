@@ -17,6 +17,7 @@
 package in.co.madhur.mapmylocation.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -30,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import com.facebook.AppEventsLogger;
@@ -37,23 +39,32 @@ import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
 import com.facebook.Session;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import in.co.madhur.mapmylocation.App;
 import in.co.madhur.mapmylocation.R;
+import in.co.madhur.mapmylocation.preferences.Preferences;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+
+import org.json.JSONException;
 
 public class FriendPickerActivity extends ActionBarActivity
 {
 	private static final int PICK_FRIENDS_ACTIVITY = 1;
 	// private Button pickFriendsButton;
 	// private TextView resultsTextView;
-	private UiLifecycleHelper lifecycleHelper;
+//	private UiLifecycleHelper lifecycleHelper;
 	boolean pickFriendsWhenSessionOpened;
 	private ListView listView;
-
+	HashMap<String, String> names;
+	private Preferences appPreferences;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -63,6 +74,7 @@ public class FriendPickerActivity extends ActionBarActivity
 		listView = (ListView) findViewById(R.id.listview);
 		listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
+		appPreferences=new Preferences(this);
 		// resultsTextView = (TextView) findViewById(R.id.resultsTextView);
 		// pickFriendsButton = (Button) findViewById(R.id.pickFriendsButton);
 		// pickFriendsButton.setOnClickListener(new View.OnClickListener()
@@ -108,11 +120,12 @@ public class FriendPickerActivity extends ActionBarActivity
 				return true;
 
 			case R.id.action_removefriend:
-
+				deleteSelectedRows();
 				return true;
 
 			case R.id.action_done:
-
+				saveFriends();
+				finish();
 				return true;
 
 			default:
@@ -122,13 +135,37 @@ public class FriendPickerActivity extends ActionBarActivity
 
 	}
 
+	private void saveFriends()
+	{
+		HashMapAdapter hashMapAdapter=(HashMapAdapter) listView.getAdapter();
+		try
+		{
+			appPreferences.setCustomFriends(hashMapAdapter.items);
+		}
+		catch (JsonProcessingException e)
+		{
+			// TODO Auto-generated catch block
+			Log.e(App.TAG, e.getMessage());
+			
+			e.printStackTrace();
+		}
+	}
+	
+	
+
 	@Override
 	protected void onStart()
 	{
 		super.onStart();
 
 		// Update the display every time we are started.
-		displaySelectedFriends(RESULT_OK);
+		// displaySelectedFriends(RESULT_OK);
+		
+		ListAdapter adapter = listView.getAdapter();
+		if(adapter==null)
+		{
+			displayStoredFriends();
+		}
 	}
 
 	@Override
@@ -145,6 +182,8 @@ public class FriendPickerActivity extends ActionBarActivity
 
 	public void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
+		Log.v(App.TAG, "onActivityResult");
+		
 		switch (requestCode)
 		{
 			case PICK_FRIENDS_ACTIVITY:
@@ -180,34 +219,86 @@ public class FriendPickerActivity extends ActionBarActivity
 	// }
 	// }
 
+	private void displayStoredFriends()
+	{
+		Log.v(App.TAG, "displayStoredFriends");
+		HashMap<String, String> friendsMap = null;
+		
+		try
+		{
+			friendsMap=appPreferences.getCustomFriends();
+		}
+		catch (JsonParseException e)
+		{
+			Log.e(App.TAG, e.getMessage());
+			e.printStackTrace();
+		}
+		catch (JsonMappingException e)
+		{
+			Log.e(App.TAG, e.getMessage());
+			e.printStackTrace();
+		}
+		catch (JSONException e)
+		{
+			Log.e(App.TAG, e.getMessage());
+			e.printStackTrace();
+		}
+		catch (IOException e)
+		{
+			Log.e(App.TAG, e.getMessage());
+			e.printStackTrace();
+		}
+		
+		if(friendsMap!=null)
+		{
+			HashMapAdapter hashMapAdapter = new HashMapAdapter(this, friendsMap);
+
+			listView.setAdapter(hashMapAdapter);
+			
+			hashMapAdapter.items=friendsMap;
+			
+			hashMapAdapter.notifyDataSetChanged();
+			hashMapAdapter.notifyDataSetInvalidated();
+			
+		}
+		
+	}
+	
+	
 	private void deleteSelectedRows()
 	{
+		Log.v(App.TAG, "deleteSelectedRows");
 
 		SparseBooleanArray checked = listView.getCheckedItemPositions();
-		for (int i = 0; i < checked.size(); i++)
+		HashMapAdapter hashMapAdapter=(HashMapAdapter) listView.getAdapter();
+		//for (int i = 0; i < checked.size(); i++)
+		for(int i=checked.size()-1; i>-1; i--)
 		{
 			if (checked.valueAt(i) == true)
 			{
-				Tag tag = (Tag) listView.getItemAtPosition(checked.keyAt(i));
+				String userName =  (String) listView.getItemAtPosition(checked.keyAt(i));
+				hashMapAdapter.remove(userName);
 			}
 		}
+		
+		listView.clearChoices();
 	}
 
 	private void displaySelectedFriends(int resultCode)
 	{
-		String results = "";
+		Log.v(App.TAG, "displaySelectedFriends");
+		
 		App application = (App) getApplication();
 		ListView listView = (ListView) findViewById(R.id.listview);
 		Collection<GraphUser> selection = application.getSelectedUsers();
 		if (selection != null && selection.size() > 0)
 		{
-			HashMap<String, String> names = new HashMap<String, String>();
+			names = new HashMap<String, String>();
 			// ArrayList<String> names = new ArrayList<String>();
 			for (GraphUser user : selection)
 			{
 				// names.add(user.getName());
 				names.put(user.getId(), user.getName());
-				Log.v(App.TAG, user.getId());
 			}
 			// results = TextUtils.join(", ", names);
 

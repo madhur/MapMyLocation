@@ -4,6 +4,7 @@ import in.co.madhur.mapmylocation.App;
 import in.co.madhur.mapmylocation.Consts;
 import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.preferences.Preferences;
+import in.co.madhur.mapmylocation.preferences.Preferences.Keys;
 import in.co.madhur.mapmylocation.preferences.Preferences.Keys.*;
 import in.co.madhur.mapmylocation.service.Alarms;
 import in.co.madhur.mapmylocation.service.LiveTrackService;
@@ -15,13 +16,17 @@ import java.util.List;
 import com.facebook.RequestAsyncTask;
 import com.facebook.Session;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
@@ -40,285 +45,305 @@ import android.webkit.WebView;
 import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
 import static in.co.madhur.mapmylocation.App.TAG;
 
-public class MainActivity extends PreferenceActivity
+public class MainActivity extends PreferenceActivity implements
+		OnSharedPreferenceChangeListener
 {
 	Preferences appPreferences;
-	private final int FB_REQUESTCODE=1;
-	private final int FB_SELCTFRIENDS=2;
-	
+	private final int FB_REQUESTCODE = 1;
+	private final int FB_SELCTFRIENDS = 2;
+
+	private OnSharedPreferenceChangeListener listener = new OnSharedPreferenceChangeListener()
+	{
+
+		@Override
+		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+		{
+
+			if (key.equals(Keys.FB_FRIENDS.key))
+			{
+				String fbFriendsVal = appPreferences.getFBFriends();
+				if (fbFriendsVal.equals(Consts.FB_FRIENDS_FIRE))
+				{
+					MainActivity.this.startActivityForResult(new Intent(MainActivity.this, FriendPickerActivity.class), FB_SELCTFRIENDS);
+				}
+			}
+
+		}
+	};
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
 		addPreferencesFromResource(R.xml.preferences);
-		
-		appPreferences=new Preferences(this);
-		
+
+		appPreferences = new Preferences(this);
+		appPreferences.setListener(listener);
+
 	}
-	
+
+	@Override
+	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
+	{
+		// TODO Auto-generated method stub
+
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, (android.view.Menu) menu);
-		
+
 		return true;
 	}
-	
+
 	@Override
 	public boolean onMenuItemSelected(int featureId, MenuItem item)
 	{
-		switch(item.getItemId())
+		switch (item.getItemId())
 		{
 			case R.id.action_viewlog:
 				show(Dialogs.VIEW_LOG);
 				return true;
-				
-				
+
 			case R.id.action_about:
 				show(Dialogs.ABOUT_DIALOG);
-				
+
 				return true;
-				
-				
+
 			default:
 				return super.onMenuItemSelected(featureId, item);
-			
+
 		}
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	@Override
 	protected void onResume()
 	{
 		// TODO Auto-generated method stub
 		super.onResume();
-		
+
 		// Connect preference listeners
 		SetListeners();
-		
+
 		// Update the label of FB interval
 		UpdateFBIntervalLabel(null);
-		
+
 		// Update the label of SMS interval
 		// UpdateMaxRateLabel(null);
-		
+
 		// Update the checkbox and summary of ENABLE Live Track (FB Connection)
 		UpdateFBConnected();
-		
+
 		UpdateTrackMeEnabled(null);
 		UpdateLiveTrackEnabled(null);
-		
+
 		UpdateFBFriendsLabel(null);
-		
+
 		CheckLocation();
 	}
-	
-	
+
 	private void CheckLocation()
 	{
-		boolean locationEnabled=Util.isLocationEnabled(this);
-		if(!locationEnabled)
+		boolean locationEnabled = Util.isLocationEnabled(this);
+		if (!locationEnabled)
 			show(Dialogs.NO_PROVIDER_ENABLED);
-		
-	}
 
+	}
 
 	private void UpdateTrackMeEnabled(Boolean enabledTrackme)
 	{
-		Preference settingsTrackme=findPreference(Preferences.Keys.SETTINGS_TRACKME.key);
-		if(enabledTrackme==null)
-			enabledTrackme=appPreferences.isTrackMeEnabled();
-		
-		if(enabledTrackme)
+		Preference settingsTrackme = findPreference(Preferences.Keys.SETTINGS_TRACKME.key);
+		if (enabledTrackme == null)
+			enabledTrackme = appPreferences.isTrackMeEnabled();
+
+		if (enabledTrackme)
 		{
-			
+
 			settingsTrackme.setEnabled(true);
 		}
 		else
 		{
 			settingsTrackme.setEnabled(false);
-			
+
 		}
-	
+
 	}
-	
+
 	private void UpdateLiveTrackEnabled(Boolean enabledLivetrack)
 	{
-		Preference settingsLivetrack=findPreference(Preferences.Keys.SETTINGS_LIVETRACK.key);
-		if(enabledLivetrack==null)
-			enabledLivetrack=appPreferences.isLiveTrackEnabled();
-		
-		if(enabledLivetrack)
+		Preference settingsLivetrack = findPreference(Preferences.Keys.SETTINGS_LIVETRACK.key);
+		if (enabledLivetrack == null)
+			enabledLivetrack = appPreferences.isLiveTrackEnabled();
+
+		if (enabledLivetrack)
 		{
-			
+
 			settingsLivetrack.setEnabled(true);
 		}
 		else
 		{
 			settingsLivetrack.setEnabled(false);
-			
-		}
-	
-	}
 
+		}
+
+	}
 
 	@Override
 	@Deprecated
 	protected Dialog onCreateDialog(final int id)
 	{
-		switch(Dialogs.values()[id])
+		switch (Dialogs.values()[id])
 		{
-		case NO_PROVIDER_ENABLED:
-			return new AlertDialog.Builder(this).setMessage(R.string.location_error_desc).setTitle(R.string.location_error).setNeutralButton("Go to Settings", new OnClickListener()
-			{
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which)
+			case NO_PROVIDER_ENABLED:
+				return new AlertDialog.Builder(this).setMessage(R.string.location_error_desc).setTitle(R.string.location_error).setNeutralButton("Go to Settings", new OnClickListener()
 				{
-					startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
-					dismissDialog(id);
-					
-				}
-			}).setPositiveButton("OK", new OnClickListener()
-			{
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which)
+
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+						dismissDialog(id);
+
+					}
+				}).setPositiveButton("OK", new OnClickListener()
 				{
-					dismissDialog(id);
-					
-				}
-			}).create();
-			
-		case ABOUT_DIALOG:
-			View v=getLayoutInflater().inflate(R.layout.about_content, null);
-			WebView webView=(WebView) v.findViewById(R.id.about_content);
-			
-			webView.loadUrl("file:///android_asset/about.html");
-			
-			return new AlertDialog.Builder(this).setPositiveButton(android.R.string.ok, null).setView(v).create();
-			
-		case VIEW_LOG:
-			return AppLog.displayAsDialog(App.LOG, this);
-			
-		case FB_DISCONNECT:
-			return new AlertDialog.Builder(this).setMessage(R.string.ui_dialog_disconnect_msg).setTitle(null).setPositiveButton(android.R.string.ok, new OnClickListener()
-			{
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which)
+
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						dismissDialog(id);
+
+					}
+				}).create();
+
+			case ABOUT_DIALOG:
+				View v = getLayoutInflater().inflate(R.layout.about_content, null);
+				WebView webView = (WebView) v.findViewById(R.id.about_content);
+
+				webView.loadUrl("file:///android_asset/about.html");
+
+				return new AlertDialog.Builder(this).setPositiveButton(android.R.string.ok, null).setView(v).create();
+
+			case VIEW_LOG:
+				return AppLog.displayAsDialog(App.LOG, this);
+
+			case FB_DISCONNECT:
+				return new AlertDialog.Builder(this).setMessage(R.string.ui_dialog_disconnect_msg).setTitle(null).setPositiveButton(android.R.string.ok, new OnClickListener()
 				{
-					// appPreferences.clearFBData();
-					
-					Session session = Session.getActiveSession();
-			        if (!session.isClosed())
-			        {
-			            session.closeAndClearTokenInformation();
-			        }
-			        
-					UpdateFBConnected();
-					
-				}
-			}).setNegativeButton(android.R.string.cancel, new OnClickListener()
-			{
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which)
+
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+						// appPreferences.clearFBData();
+
+						Session session = Session.getActiveSession();
+						if (!session.isClosed())
+						{
+							session.closeAndClearTokenInformation();
+						}
+
+						UpdateFBConnected();
+
+					}
+				}).setNegativeButton(android.R.string.cancel, new OnClickListener()
 				{
-					
-				}
-			}).create();
-			
-		case EMPTY_SECRET:
-			return new AlertDialog.Builder(this).setMessage(R.string.pref_emptysecret_msg).setTitle(R.string.app_name).setPositiveButton(android.R.string.ok, null).create();
-			
-		default:
-			return null;
+
+					@Override
+					public void onClick(DialogInterface dialog, int which)
+					{
+
+					}
+				}).create();
+
+			case EMPTY_SECRET:
+				return new AlertDialog.Builder(this).setMessage(R.string.pref_emptysecret_msg).setTitle(R.string.app_name).setPositiveButton(android.R.string.ok, null).create();
+
+			default:
+				return null;
 		}
 	}
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
-		if(requestCode==FB_REQUESTCODE)
+		if (requestCode == FB_REQUESTCODE)
 		{
-			
-			if(resultCode==RESULT_OK)
+
+			if (resultCode == RESULT_OK)
 			{
-				/*String access_token=data.getStringExtra(Consts.ACCESS_TOKEN);
-				String access_expires=data.getStringExtra(Consts.ACCESS_EXPIRES);
-				String username=data.getStringExtra(Consts.USER_NAME);
-				
-				appPreferences.setFBTokenData(access_token, access_expires, username);*/
-				
+				/*
+				 * String access_token=data.getStringExtra(Consts.ACCESS_TOKEN);
+				 * String
+				 * access_expires=data.getStringExtra(Consts.ACCESS_EXPIRES);
+				 * String username=data.getStringExtra(Consts.USER_NAME);
+				 * 
+				 * appPreferences.setFBTokenData(access_token, access_expires,
+				 * username);
+				 */
+
 			}
-			else if(resultCode== RESULT_CANCELED)
+			else if (resultCode == RESULT_CANCELED)
 			{
 				// appPreferences.clearFBData();
-				
+
 			}
-			
+
 			UpdateFBConnected();
-			
+
 		}
-		else if(requestCode == FB_SELCTFRIENDS)
+		else if (requestCode == FB_SELCTFRIENDS)
 		{
-			if(resultCode==RESULT_OK)
+			if (resultCode == RESULT_OK)
 			{
-				
-				
+
 			}
-			else if(resultCode==RESULT_CANCELED)
+			else if (resultCode == RESULT_CANCELED)
 			{
-			
-				
+
 			}
-			
+
 		}
 	}
-	
+
 	private void UpdateFBConnected()
 	{
-		CheckBoxPreference fbConnected=(CheckBoxPreference) findPreference(Preferences.Keys.CONNECT_FB.key);
-		
+		CheckBoxPreference fbConnected = (CheckBoxPreference) findPreference(Preferences.Keys.CONNECT_FB.key);
+
 		Session fbSession = Session.openActiveSessionFromCache(this);
 
 		if (fbSession == null)
 			fbSession = Session.getActiveSession();
-		
-		if(fbSession!=null && fbSession.isOpened())
+
+		if (fbSession != null && fbSession.isOpened())
 			fbConnected.setChecked(true);
 		else
 		{
-			if(fbSession!=null)
+			if (fbSession != null)
 			{
-			Log.v(TAG, fbSession.getState().toString());
-			
+				Log.v(TAG, fbSession.getState().toString());
+
 			}
 			else
 			{
 				Log.v(TAG, "session is null, removing checkbox");
-				
+
 			}
 			fbConnected.setChecked(false);
 		}
 
-		
 		String summary;
-		if(fbConnected.isChecked())
-			summary=getString(R.string.fb_already_connected);
+		if (fbConnected.isChecked())
+			summary = getString(R.string.fb_already_connected);
 		else
-			summary=getString(R.string.fb_needs_connecting);
-		
+			summary = getString(R.string.fb_needs_connecting);
+
 		fbConnected.setSummary(summary);
-		
+
 	}
-
-
-
 
 	public void show(Dialogs d)
 	{
@@ -336,108 +361,98 @@ public class MainActivity extends PreferenceActivity
 			// ignore
 		}
 	}
-	
-	
-	
-	
+
 	private void UpdateFBIntervalLabel(String interval)
 	{
-		
-		
-		ListPreference FBInterval=(ListPreference) findPreference(Preferences.Keys.FB_INTERVAL.key);
-		if(interval==null)
+
+		ListPreference FBInterval = (ListPreference) findPreference(Preferences.Keys.FB_INTERVAL.key);
+		if (interval == null)
 		{
-				String entry=(String) FBInterval.getEntry();
-				FBInterval.setTitle(entry);
-			
+			String entry = (String) FBInterval.getEntry();
+			FBInterval.setTitle(entry);
+
 		}
 		else
 		{
-			int index=FBInterval.findIndexOfValue(interval);
-			if(index!=-1)
+			int index = FBInterval.findIndexOfValue(interval);
+			if (index != -1)
 			{
-				interval=(String) FBInterval.getEntries()[index];
+				interval = (String) FBInterval.getEntries()[index];
 				FBInterval.setTitle(interval);
 			}
 		}
-				
-		
+
 	}
-	
 
 	protected void UpdateFBFriendsLabel(String friends)
 	{
-		ListPreference FBFriends=(ListPreference) findPreference(Preferences.Keys.FB_FRIENDS.key);
-		if(friends==null)
+		ListPreference FBFriends = (ListPreference) findPreference(Preferences.Keys.FB_FRIENDS.key);
+		if (friends == null)
 		{
-				String entry=(String) FBFriends.getEntry();
-				FBFriends.setTitle(entry);
-			
+			String entry = (String) FBFriends.getEntry();
+			FBFriends.setTitle(entry);
+
 		}
 		else
 		{
-			int index=FBFriends.findIndexOfValue(friends);
-			if(index!=-1)
+			int index = FBFriends.findIndexOfValue(friends);
+			if (index != -1)
 			{
-				friends=(String) FBFriends.getEntries()[index];
+				friends = (String) FBFriends.getEntries()[index];
 				FBFriends.setTitle(friends);
 			}
 		}
-		
+
 	}
-	
-//	private void UpdateMaxRateLabel(String rate )
-//	{
-//		ListPreference MaxRateInterval=(ListPreference) findPreference(Preferences.Keys.MAX_RATE.key);
-//		if(rate==null)
-//		{								
-//			MaxRateInterval.setTitle(MaxRateInterval.getEntry());					
-//			
-//		}
-//		else
-//		{
-//			int index=MaxRateInterval.findIndexOfValue(rate);
-//			if(index!=-1)
-//			{
-//				rate=(String) MaxRateInterval.getEntries()[index];
-//				MaxRateInterval.setTitle(rate);
-//			}
-//		}
-//		
-//	}
-	
-	
+
+	// private void UpdateMaxRateLabel(String rate )
+	// {
+	// ListPreference MaxRateInterval=(ListPreference)
+	// findPreference(Preferences.Keys.MAX_RATE.key);
+	// if(rate==null)
+	// {
+	// MaxRateInterval.setTitle(MaxRateInterval.getEntry());
+	//
+	// }
+	// else
+	// {
+	// int index=MaxRateInterval.findIndexOfValue(rate);
+	// if(index!=-1)
+	// {
+	// rate=(String) MaxRateInterval.getEntries()[index];
+	// MaxRateInterval.setTitle(rate);
+	// }
+	// }
+	//
+	// }
+
 	private void SetListeners()
 	{
-		
-		
-		
+
 		findPreference(Preferences.Keys.FB_INTERVAL.key).setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 		{
-			
+
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue)
 			{
-				
-				
+
 				UpdateFBIntervalLabel(newValue.toString());
-				Alarms alarms=new Alarms(MainActivity.this, appPreferences);
+				Alarms alarms = new Alarms(MainActivity.this, appPreferences);
 				alarms.cancel();
 				alarms.Schedule();
 				return true;
 			}
 		});
-		
-		
+
 		findPreference(Preferences.Keys.SECRET_CODE.key).setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 		{
-			
+
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue)
 			{
-				String newSecret=(String) newValue;
-				
-				if(TextUtils.isEmpty(newSecret))
+				String newSecret = (String) newValue;
+
+				if (TextUtils.isEmpty(newSecret))
 				{
 					show(Dialogs.EMPTY_SECRET);
 					return false;
@@ -445,23 +460,20 @@ public class MainActivity extends PreferenceActivity
 				return true;
 			}
 		});
-		
-		
-		/*findPreference(Preferences.Keys.MAX_RATE.key).setOnPreferenceChangeListener(new OnPreferenceChangeListener()
-		{
-			
-			@Override
-			public boolean onPreferenceChange(Preference preference, Object newValue)
-			{
-				
-				UpdateMaxRateLabel(newValue.toString());
-				return true;
-			}
-		});*/
-		
+
+		/*
+		 * findPreference(Preferences.Keys.MAX_RATE.key).
+		 * setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+		 * 
+		 * @Override public boolean onPreferenceChange(Preference preference,
+		 * Object newValue) {
+		 * 
+		 * UpdateMaxRateLabel(newValue.toString()); return true; } });
+		 */
+
 		findPreference(Preferences.Keys.FB_FRIENDS.key).setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 		{
-			
+
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue)
 			{
@@ -470,111 +482,103 @@ public class MainActivity extends PreferenceActivity
 				return true;
 			}
 		});
-		
+
 		findPreference(Preferences.Keys.CONNECT_FB.key).setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 		{
-			
+
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue)
 			{
-				boolean newVal=(Boolean) newValue;
-				if(newVal)
+				boolean newVal = (Boolean) newValue;
+				if (newVal)
 				{
 					startActivityForResult(new Intent(MainActivity.this, FBLogin.class), FB_REQUESTCODE);
-					
+
 				}
 				else
 					show(Dialogs.FB_DISCONNECT);
 				return false;
 			}
 		});
-		
-		/*findPreference(Preferences.Keys.SELECT_FB_FRIENDS.key).setOnPreferenceClickListener(new OnPreferenceClickListener()
-		{
-			
-			@Override
-			public boolean onPreferenceClick(Preference preference)
-			{
-				startActivityForResult(new Intent(MainActivity.this, FriendPickerActivity.class), FB_SELCTFRIENDS);
-				return true;
-			}
-		});*/
-		
+
+		/*
+		 * findPreference(Preferences.Keys.SELECT_FB_FRIENDS.key).
+		 * setOnPreferenceClickListener(new OnPreferenceClickListener() {
+		 * 
+		 * @Override public boolean onPreferenceClick(Preference preference) {
+		 * startActivityForResult(new Intent(MainActivity.this,
+		 * FriendPickerActivity.class), FB_SELCTFRIENDS); return true; } });
+		 */
+
 		findPreference(Preferences.Keys.ENABLE_TRACKME.key).setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 		{
-			Preference settingsTrackme=findPreference(Preferences.Keys.SETTINGS_TRACKME.key);
+			Preference settingsTrackme = findPreference(Preferences.Keys.SETTINGS_TRACKME.key);
+
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue)
 			{
-				boolean newVal=(Boolean) newValue;
-				if(newVal)
+				boolean newVal = (Boolean) newValue;
+				if (newVal)
 				{
-					
+
 					preference.setSummary(R.string.pref_enable_trackme_desc_enabled);
-					
+
 				}
 				else
 				{
 					preference.setSummary(R.string.pref_enable_trackme_desc);
 				}
 				UpdateTrackMeEnabled(newVal);
-				
+
 				return true;
 			}
 		});
-		
+
 		findPreference(Preferences.Keys.ENABLE_LIVETRACK.key).setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 		{
-			Preference settingsLivetrack=findPreference(Preferences.Keys.SETTINGS_LIVETRACK.key);
-			
+			Preference settingsLivetrack = findPreference(Preferences.Keys.SETTINGS_LIVETRACK.key);
+
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue)
 			{
-				boolean newVal=(Boolean) newValue;
+				boolean newVal = (Boolean) newValue;
 				UpdateLiveTrackEnabled(newVal);
-				
-				
-				
-				
-				if(newVal)
+
+				if (newVal)
 				{
-					new Alarms(MainActivity.this, appPreferences).Schedule();	
+					new Alarms(MainActivity.this, appPreferences).Schedule();
 					Log.v(App.TAG, "Scheduling FB Posts at");
 				}
 				else
 				{
 					new Alarms(MainActivity.this, appPreferences).cancel();
-					Log.v(App.TAG, "Cancelled live track service" );
+					Log.v(App.TAG, "Cancelled live track service");
 				}
 				return true;
 			}
 		});
-		
-		
+
 		findPreference(Preferences.Keys.ALLOW_CONTACTS.key).setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 		{
-			
+
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue)
 			{
 				return true;
 			}
 		});
-		
+
 		findPreference(Preferences.Keys.ABOUT.key).setOnPreferenceClickListener(new OnPreferenceClickListener()
 		{
-			
+
 			@Override
 			public boolean onPreferenceClick(Preference preference)
 			{
 				show(Dialogs.ABOUT_DIALOG);
 				return true;
-				
+
 			}
 		});
 	}
-
-
-	
 
 }

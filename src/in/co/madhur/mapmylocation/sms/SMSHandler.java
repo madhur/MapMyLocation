@@ -73,8 +73,7 @@ public class SMSHandler
 			smsService.putExtras(data);
 			smsService.setClass(context.getApplicationContext(), SMSService.class);
 			
-			
-			ComponentName startedService=context.startService(smsService);
+			context.startService(smsService);
 		
 	}
 

@@ -3,7 +3,11 @@ package in.co.madhur.mapmylocation.service;
 import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
 import static in.co.madhur.mapmylocation.App.TAG;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import in.co.madhur.mapmylocation.App;
 import in.co.madhur.mapmylocation.Consts;
@@ -27,6 +31,8 @@ import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.Request.Callback;
 import com.facebook.model.GraphObject;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -181,8 +187,52 @@ public class LiveTrackService extends IntentService
 			jsonObject.put("value", fbPrivacy);
 			return jsonObject;
 		}
+		else
+		{
+			jsonObject.put("value", "CUSTOM");
+			
+			HashMap<String, String> customFriends = null;
+			try
+			{
+				customFriends=appPrefences.getCustomFriends();
+			}
+			catch (JsonParseException e)
+			{
+				Log.e(App.TAG, e.getMessage());
+			}
+			catch (JsonMappingException e)
+			{
+				Log.e(App.TAG, e.getMessage());
+			}
+			catch (IOException e)
+			{
+				Log.e(App.TAG, e.getMessage());
+			}
+			
+			String commaSeperatedIds=GetCommaSeparetedIds(customFriends);
+			Log.v(App.TAG, commaSeperatedIds);
+			jsonObject.put("allow", commaSeperatedIds);
+			
+			return jsonObject;
+			
+		}
 
-		return null;
+	}
+
+	private String GetCommaSeparetedIds(HashMap<String, String> customFriends)
+	{
+		StringBuilder sbr=new StringBuilder();
+		Set<String> ids=customFriends.keySet();
+		Iterator<String> itr=ids.iterator();
+		while(itr.hasNext())
+		{
+			
+			sbr.append(itr.next());
+			sbr.append(',');
+			
+		}
+		
+		return sbr.toString();
 	}
 
 	private Session GetSession()

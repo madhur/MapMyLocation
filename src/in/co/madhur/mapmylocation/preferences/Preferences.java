@@ -1,6 +1,18 @@
 package in.co.madhur.mapmylocation.preferences;
 
 
+import java.io.IOException;
+import java.util.HashMap;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
@@ -17,11 +29,10 @@ import in.co.madhur.mapmylocation.activity.FriendPickerActivity;
 import in.co.madhur.mapmylocation.activity.MainActivity;
 import in.co.madhur.mapmylocation.preferences.Preferences.Keys.*;
 
-public final class Preferences implements OnSharedPreferenceChangeListener 
+public final class Preferences
 {
 	private SharedPreferences sharedPreferences;
 	Context context;
-	private final int FB_REQUESTCODE=1;
 	private final int FB_SELCTFRIENDS=2;
 	
 	public enum Keys
@@ -46,6 +57,7 @@ public final class Preferences implements OnSharedPreferenceChangeListener
 		FB_FRIENDS("pref_selectfbfriends"),
 		SETTINGS_TRACKME("pref_settings_trackme"),
 		SETTINGS_LIVETRACK("pref_settings_livetrack"),
+		FB_FRIENDS_CUSTOM("pref_fb_friends_custom"),
 		FB_USERNAME("fb_username");
 		
 		public final String key;
@@ -62,7 +74,29 @@ public final class Preferences implements OnSharedPreferenceChangeListener
 	{
 		this.context=context;
 		this.sharedPreferences=PreferenceManager.getDefaultSharedPreferences(context);
-		sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+		// sharedPreferences.registerOnSharedPreferenceChangeListener(this);
+	}
+	
+	public void setCustomFriends(HashMap<String, String> friendsObject) throws JsonProcessingException
+	{
+		// JSONObject jsonObject=new JSONObject(friendsObject);
+		ObjectMapper mapper = new ObjectMapper();
+		SharedPreferences.Editor editor=sharedPreferences.edit();
+		
+		String json = mapper.writeValueAsString(friendsObject);
+		editor.putString(Keys.FB_FRIENDS_CUSTOM.key, json);
+		editor.commit();
+	}
+	
+	public HashMap<String, String> getCustomFriends() throws JSONException, JsonParseException, JsonMappingException, IOException
+	{
+		String friendsObj=sharedPreferences.getString(Keys.FB_FRIENDS_CUSTOM.key, "");
+		
+		
+		ObjectMapper mapper = new ObjectMapper();
+		HashMap<String, String> map = mapper.readValue(friendsObj, new TypeReference<HashMap<String,String>>(){});
+		
+		return map;
 	}
 	
 	public String getSecretCode()
@@ -185,7 +219,6 @@ public final class Preferences implements OnSharedPreferenceChangeListener
 		return sharedPreferences.getString(Keys.FB_ACCESS_EXPIRES.key, "");
 	}*/
 
-	@Override
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences,
 			String key)
 	{
@@ -215,6 +248,12 @@ public final class Preferences implements OnSharedPreferenceChangeListener
 			}
 		}
 
+	}
+
+	public void setListener(OnSharedPreferenceChangeListener listener)
+	{
+		sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
+		
 	}
 	
 }
