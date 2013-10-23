@@ -8,6 +8,8 @@ import org.acra.ReportingInteractionMode;
 import com.facebook.model.GraphUser;
 
 import android.app.Application;
+import android.os.Build;
+import android.util.Log;
 
 @ReportsCrashes(formKey = "", // This is required for backward compatibility but
 								// not used
@@ -29,8 +31,8 @@ public class App extends Application
 	{
 		// TODO Auto-generated method stub
 		super.onCreate();
-		
-	//	ACRA.init(this);
+		if(!Build.PRODUCT.equals("sdk_x86"))
+			ACRA.init(this);
 	}
 	
 	public Collection<GraphUser> getSelectedUsers()

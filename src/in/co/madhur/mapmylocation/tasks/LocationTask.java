@@ -66,7 +66,7 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 		{
 			NotificationManager nm=(NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 			
-			NotificationCompat.Builder builder=Notifications.GetNotificationBuilderSMS(context, sender , NotificationType.INCOMING_SMS);
+			NotificationCompat.Builder builder=Notifications.GetNotificationBuilderSMS(context, dispSender , NotificationType.INCOMING_SMS);
 			
 			nm.notify((int) msgStamp, builder.build());
 			
@@ -122,7 +122,9 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 		}
 		else if(showNotification)
 		{
-			smsDeliveredReciver=new BroadcastReceiver() {
+			smsDeliveredReciver=new BroadcastReceiver() 
+			{
+				NotificationCompat.Builder builder;
 				
 				@Override
 				public void onReceive(Context arg0, Intent arg1) {
@@ -133,17 +135,17 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 					case Activity.RESULT_OK:
 						if(LOCAL_LOGV)
 							Log.v(App.TAG, "Notification for delivered: " + msgStamp);
-						NotificationCompat.Builder builder=Notifications.GetNotificationBuilderSMS(context, dispSender, NotificationType.OUTGOING_SMS);
+						builder=Notifications.GetNotificationBuilderSMS(context, dispSender, NotificationType.OUTGOING_SMS);
 						nm.notify((int) msgStamp, builder.build());
 						appLog.append("SMS sent with location");
 						
 						break;
 						
 					case Activity.RESULT_CANCELED:
-						
-						break;
-						
 					default:
+						builder=Notifications.GetNotificationBuilder(context, dispSender, context.getString(R.string.noti_sms_deliverederror));
+						nm.notify((int) msgStamp, builder.build());
+						
 						if(LOCAL_LOGV)
 							Log.v(App.TAG, String.valueOf(getResultCode()));
 						
@@ -155,7 +157,9 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 			};
 			
 			
-			smsSentReciever =new BroadcastReceiver() {
+			smsSentReciever =new BroadcastReceiver() 
+			{
+				NotificationCompat.Builder builder;
 				
 				@Override
 				public void onReceive(Context arg0, Intent arg1) {
@@ -172,7 +176,9 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 					case SmsManager.RESULT_ERROR_NULL_PDU:
 					case SmsManager.RESULT_ERROR_RADIO_OFF:
 						appLog.append("Error sending SMS. Result code: " + getResultCode());
-					
+						
+						builder=Notifications.GetNotificationBuilder(context, dispSender, context.getString(R.string.noti_sms_senterror));
+						nm.notify((int) msgStamp, builder.build());
 					break;
 					
 					default:
@@ -270,7 +276,7 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 		SmsManager smsManager=SmsManager.getDefault();
 		
 		String message= String.format(Consts.GOOGLE_MAPS_URL,result.getLatitude(), result.getLongitude());
-		
+		Log.v(App.TAG, "Sending sms to"+sender);
 		smsManager.sendTextMessage(sender, null, message, sentPI, deliveredPI);
 		
 	}

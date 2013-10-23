@@ -90,7 +90,23 @@ public class Notifications
 		NotificationCompat.Builder noti = new NotificationCompat.Builder(context);
 		noti.setContentTitle(context.getString(R.string.app_name));
 		noti.setAutoCancel(true);
+		noti.setContentText(errorMessage);
+		noti.setTicker(context.getString(R.string.app_name) +": "+ errorMessage);
+		noti.setSmallIcon(R.drawable.ic_notification);
+		noti.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
 
+		noti.setContentIntent(GetPendingIntent(context, errorMessage));
+
+		return noti;
+	}
+	
+	public static NotificationCompat.Builder GetNotificationBuilder(Context context, String sender , String errorMessage)
+	{
+		NotificationCompat.Builder noti = new NotificationCompat.Builder(context);
+		noti.setContentTitle(sender);
+		noti.setAutoCancel(true);
+		noti.setContentText(errorMessage);
+		noti.setTicker(sender +": "+ errorMessage);
 		noti.setSmallIcon(R.drawable.ic_notification);
 		noti.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
 

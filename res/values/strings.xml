@@ -52,6 +52,8 @@
     <string name="pref_shareloc_desc">Share location instantly to your friends</string>
     <string name="pref_emptysecret_msg">Empty secret code is not allowed</string>
     
+    <string name="noti_sms_senterror">Error sending SMS</string>
+    <string name="noti_sms_deliverederror">Error delivering SMS</string>
     <string name="noti_loc_request">Location requested</string>
     <string name="noti_loc_response">Location sent</string>
     <string name="noti_loc_failure">Could not obtain location. Make sure you have enabled access to your location in the \'Location Access\' settings.</string>

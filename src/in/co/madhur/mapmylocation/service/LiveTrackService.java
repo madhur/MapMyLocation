@@ -132,7 +132,8 @@ public class LiveTrackService extends IntentService
 			appLog.append("Failure: Retrieving location while posting");
 			if (showNotification)
 			{
-				NotificationCompat.Builder builder = new Notifications(this).GetNotificationBuilder(this, NotificationType.LOCATION_FAILURE);
+				new Notifications(this);
+				NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.LOCATION_FAILURE);
 				nm.notify(0, builder.build());
 			}
 
@@ -148,6 +149,7 @@ public class LiveTrackService extends IntentService
 		try
 		{
 			privacyOptions = GetPrivacyJson(fbPrivacy);
+			Log.v(App.TAG, privacyOptions.toString());
 		}
 		catch (JSONException e)
 		{
@@ -162,7 +164,8 @@ public class LiveTrackService extends IntentService
 
 			if (showNotification)
 			{
-				NotificationCompat.Builder builder = new Notifications(this).GetNotificationBuilder(this, NotificationType.FB_POSTED);
+				new Notifications(this);
+				NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.FB_POSTED);
 				nm.notify(0, builder.build());
 			}
 		}
@@ -171,7 +174,8 @@ public class LiveTrackService extends IntentService
 			appLog.append(fbResponse.getError().getErrorMessage());
 			if (showNotification)
 			{
-				NotificationCompat.Builder builder = new Notifications(this).GetNotificationBuilder(this, NotificationType.FB_FAILURE, fbResponse.getError().getErrorMessage());
+				new Notifications(this);
+				NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.FB_FAILURE, fbResponse.getError().getErrorMessage());
 				nm.notify(0, builder.build());
 			}
 		}
@@ -182,8 +186,9 @@ public class LiveTrackService extends IntentService
 	{
 		JSONObject jsonObject = new JSONObject();
 
-		if (!fbPrivacy.equals(Consts.FBPrivacies.CUSTOM))
+		if (!fbPrivacy.equals(Consts.FBPrivacies.CUSTOM.toString()))
 		{
+			
 			jsonObject.put("value", fbPrivacy);
 			return jsonObject;
 		}
@@ -210,7 +215,6 @@ public class LiveTrackService extends IntentService
 			}
 			
 			String commaSeperatedIds=GetCommaSeparetedIds(customFriends);
-			Log.v(App.TAG, commaSeperatedIds);
 			jsonObject.put("allow", commaSeperatedIds);
 			
 			return jsonObject;
@@ -232,7 +236,7 @@ public class LiveTrackService extends IntentService
 			
 		}
 		
-		return sbr.toString();
+		return sbr.toString().substring(0, sbr.length()-1);
 	}
 
 	private Session GetSession()

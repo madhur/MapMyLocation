@@ -27,6 +27,7 @@ public class Alarms
 		long recurInterval=recurTime*1000;
 		
 		alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 10000, recurInterval, GetPendingIntent(context) );
+		// alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 10000, 15000, GetPendingIntent(context) );
 	}
 	
 	public void cancel()
