@@ -48,8 +48,8 @@
     <string name="pref_trackme_shownotification_desc">Notification will be displayed when location update is fired through SMS</string>
     <string name="pref_livetrack_shownotification">Show notification</string>
     <string name="pref_livetrack_shownotification_desc">Notification will be displayed whenever location is posted on your timeline</string>
-    <string name="pref_shareloc">Share location</string>
-    <string name="pref_shareloc_desc">Share location instantly to your friends</string>
+    <string name="pref_shareloc">Share Your location</string>
+    <string name="pref_shareloc_desc">Send a Maps link of your last updated location to a friend</string>
     <string name="pref_emptysecret_msg">Empty secret code is not allowed</string>
     
     <string name="noti_sms_senterror">Error sending SMS</string>
@@ -88,4 +88,7 @@
  	  <string name="pref_threadtimeout_desc">Timeout interval after which thread initiated to get the location times out.This setting is for advanced users only.Do not change this value unless you know what you are doing</string>
  	  <string name="pref_loctimeout_desc">Timeout interval for which application polls GPS and network listeners. You might want to increase this value if you are getting frequent timeout errors in logs. This setting is for advanced users only. 
  	      Do not change this value unless you know what you are doing</string>
+ 	      
+ 	  <string name="pref_enablegeocode">Enable Reverse Geocoding</string>
+ 	  <string name="pref_enablegeocode_desc">Enable translations of locations co-ordinates to addresses</string>
 </resources>

@@ -15,18 +15,25 @@ public class Connection
 		
 	}
 	
-	public static boolean isBackGroundDataEnabled(Context context)
+	private static boolean isBackGroundDataEnabled(Context context)
 	{
 			return getConnectivityManager(context).getBackgroundDataSetting();
 	}
 	
-	public static boolean isConnected(Context context) 
+	private static boolean isConnected(Context context) 
 	{
 		
 		NetworkInfo networkInfo= getConnectivityManager(context).getActiveNetworkInfo();
 		if(networkInfo != null && networkInfo.isConnected())
 			return true;
 		
+		return false;
+	}
+	
+	public static boolean isNetworkGood(Context context)
+	{
+		if(isConnected(context) && isBackGroundDataEnabled(context))
+			return true;
 		return false;
 	}
 }

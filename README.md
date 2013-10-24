@@ -1,6 +1,6 @@
 ##Hermes (a.k.a Map My Location)
 
-Hermes is an attempt to provide a sense of security to all the travelers of all over the world and especially the women in India who use the public transport to commute to their work place and back home.
+Hermes is an attempt to provide a sense of security to all the travelers of all over the world and especially the women who use the public transport to commute to their work place and back home.
 
 Hermes is an application that lets a commuter be tracked while on the road, posting the whereabouts at regular intervals on popular social network. The posts are secured and are visible to only those whom the commuter has provided permissions to view. It also enables your friends and family to know your whereabouts by sending you a SMS containing a secret code.
 
@@ -32,6 +32,8 @@ friends in your friend list will be able to see the posted location on your time
 * Read SMS - Required to capture an SMS contaning Hermes secret code
 * Send SMS - TrackMe automatically sends SMS reply to the sender with Google Maps location. Note: Your carrier standard outgoing SMS charge may apply.
 * Access fine location - To capture your location
+* Access network state - Used to determine if application can post to facebook through network connection.
+* Run at Startup - Used to enable live track service after reboot
 
 
 ### Why the application requires Facebook permissions?
@@ -59,6 +61,11 @@ If the application fails to post your location on facebook. Check the below cond
 * You have selected the friends option (either Everyone, Friends, Friends of Friends, Custom)
 
 If the internet is not available at the specified time of the making a facebook post, the application will post the location as soon as the network becomes available.
+
+### What is the ideal data/WIFI/GPS connection for this application
+
+During my testing, the application works well with 2G connection, providing fairly accurate locations.
+GPS can be turned on if precise location is preferred during LiveTrack
 
 ### I want to file a bug report, What should I do ?
 

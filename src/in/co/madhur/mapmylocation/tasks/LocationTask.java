@@ -200,6 +200,7 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 		}
 		
 		sendSMS(result);
+		preferences.setLastLocation(result);
 		
 	}
 	

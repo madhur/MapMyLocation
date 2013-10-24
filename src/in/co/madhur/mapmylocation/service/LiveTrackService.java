@@ -40,12 +40,14 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.location.Address;
 import android.location.Location;
 import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.location.Geocoder;
 
 public class LiveTrackService extends IntentService
 {
@@ -123,16 +125,14 @@ public class LiveTrackService extends IntentService
 			return;
 		}
 
-		if (!(Connection.isBackGroundDataEnabled(this) && Connection.isConnected(this)))
-		{
-			appLog.append("No Connection to network or background data disabled");
-			stopSelf();
-			return;
-		}
-
 		Coordinates result = getLocation(appPrefences.getThreadTimeout(), appPrefences.getLocationTimeout());
-
-		if (result == null)
+		
+		if(result!=null)
+		{
+			appPrefences.setLastLocation(result);
+			
+		}
+		else if (result == null)
 		{
 			appLog.append("Failure: Retrieving location while posting");
 			if (showNotification)
@@ -144,6 +144,48 @@ public class LiveTrackService extends IntentService
 
 			stopSelf();
 			return;
+		}
+		
+		
+		if(!Connection.isNetworkGood(this))
+		{
+			appLog.append("No Connection to network or background data disabled");
+			stopSelf();
+			return;
+		}
+		
+		List<Address> addresses = null;
+		if(appPrefences.isGeoCodeEnabled())
+		{
+			Geocoder geoCoder=new Geocoder(this);
+			try
+			{
+				addresses=geoCoder.getFromLocation(result.getLatitude(), result.getLongitude(), 1);
+			}
+			catch (IOException e)
+			{
+				appLog.append("Error Gecoding: "+ e.getMessage());
+				e.printStackTrace();
+			}
+			
+			if(addresses!=null && addresses.size() > 0)
+			{
+				
+				Address address=addresses.get(0);
+				
+				if(App.LOCAL_LOGV)
+				{
+					
+					Log.v(TAG, address.getLocality());
+					Log.v(TAG, address.getFeatureName());
+					Log.v(TAG, address.getAdminArea());
+					Log.v(TAG, address.getPostalCode());
+					Log.v(TAG, address.getSubAdminArea());
+					Log.v(TAG, address.getSubAdminArea());
+				}
+			}
+			
+			
 		}
 
 		String fbUrl = String.format(Consts.GOOGLE_MAPS_URL, location.getLatitude(), location.getLongitude());

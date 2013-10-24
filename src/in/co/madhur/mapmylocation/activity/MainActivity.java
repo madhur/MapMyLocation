@@ -3,6 +3,7 @@ package in.co.madhur.mapmylocation.activity;
 import in.co.madhur.mapmylocation.App;
 import in.co.madhur.mapmylocation.Consts;
 import in.co.madhur.mapmylocation.R;
+import in.co.madhur.mapmylocation.location.Coordinates;
 import in.co.madhur.mapmylocation.preferences.Preferences;
 import in.co.madhur.mapmylocation.preferences.Preferences.Keys;
 import in.co.madhur.mapmylocation.preferences.Preferences.Keys.*;
@@ -153,6 +154,17 @@ public class MainActivity extends PreferenceActivity implements
 		UpdateFBFriendsLabel(null);
 
 		CheckLocation();
+		
+		CheckLastLocationEnabled();
+	}
+
+	private void CheckLastLocationEnabled()
+	{
+		CheckBoxPreference shareLocPreference=(CheckBoxPreference) findPreference(Preferences.Keys.PREF_SHARE_LOC.key);
+		Coordinates result=appPreferences.getLastLocation();
+		if(result==null)
+			shareLocPreference.setEnabled(false);
+		
 	}
 
 	private void CheckLocation()
@@ -582,6 +594,31 @@ public class MainActivity extends PreferenceActivity implements
 				show(Dialogs.ABOUT_DIALOG);
 				return true;
 
+			}
+		});
+		
+		findPreference(Preferences.Keys.PREF_SHARE_LOC.key).setOnPreferenceClickListener(new OnPreferenceClickListener()
+		{
+			
+			@Override
+			public boolean onPreferenceClick(Preference preference)
+			{
+				Coordinates result=appPreferences.getLastLocation();
+				if(result!=null)
+				{
+					Intent i=new Intent();
+					i.setAction(Intent.ACTION_SEND);
+					i.setType("text/plain");
+					String message= String.format(Consts.GOOGLE_MAPS_URL,result.getLatitude(), result.getLongitude());
+					
+					i.putExtra(Intent.EXTRA_SUBJECT, "Sharing URL");
+					i.putExtra(Intent.EXTRA_TEXT, message);
+					
+					startActivity(i);
+					
+					
+				}
+				return false;
 			}
 		});
 	}
