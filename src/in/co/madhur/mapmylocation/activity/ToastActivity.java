@@ -13,9 +13,7 @@ public class ToastActivity extends Activity
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		Log.v(App.TAG, "Starting toast");
 		Intent notiIntent=getIntent();
 		if(notiIntent!=null)
 		{

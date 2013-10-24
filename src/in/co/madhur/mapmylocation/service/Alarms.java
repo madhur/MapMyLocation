@@ -19,6 +19,13 @@ public class Alarms
 		this.appPreferences=appPreferences;
 	}
 	
+	public Alarms(Context context)
+	{
+		
+		this.context=context;
+		this.appPreferences=new Preferences(context);
+	}
+	
 	public void Schedule()
 	{
 		
@@ -35,6 +42,13 @@ public class Alarms
 		GetAlarmManager(context).cancel(GetPendingIntent(context));
 		
 	}
+	
+	public boolean shouldSchedule()
+	{
+		boolean liveTrackEanbled=appPreferences.isLiveTrackEnabled();
+		return liveTrackEanbled;
+	}
+	
 	
 	private static AlarmManager GetAlarmManager(Context context)
 	{

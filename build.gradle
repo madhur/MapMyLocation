@@ -14,25 +14,15 @@ apply plugin: 'android'
 dependencies {
    
     compile project(':facebooksdk')
+    compile project(':appcompat')
+    compile files('libs/jackson-annotations-2.2.3.jar')
+    compile files('libs/jackson-core-2.2.3.jar')
+    compile files('libs/jackson-databind-2.2.3.jar')
+    compile files('libs/acra-4.5.0.jar')
+    compile files('appcompat/libs/android-support-v7-appcompat.jar')
 }
 
-android {
-    compileSdkVersion 18
-    
-     sourceSets {
-        main {
-            manifest.srcFile 'AndroidManifest.xml'
-            java.srcDirs = ['src']
-            resources.srcDirs = ['src']
-            aild.srcDirs = ['src']
-            renderscript.srcDirs = ['src']
-            res.srcDirs = ['res']
-            assets.srcDirs = ['assets']
-        }
 
-        instrumentTest.setRoot('tests')
-    }
-}
 
 android {
     buildToolsVersion "17.0"
@@ -51,6 +41,24 @@ android {
 
         instrumentTest.setRoot('tests')
     }
+
+    signingConfigs {
+    release {
+        storeFile file(System.getenv("KEYSTORE"))
+        storePassword System.getenv("KEYSTORE_PASSWORD")
+        keyAlias System.getenv("KEY_ALIAS")
+        keyPassword System.getenv("KEY_PASSWORD")
+    }
+}
+
+    
+    buildTypes {
+    release {
+        signingConfig signingConfigs.release
+    }
+}
+    
+    
 } 
 
 subprojects {
@@ -60,4 +68,5 @@ subprojects {
         }
     }
 }
+
 

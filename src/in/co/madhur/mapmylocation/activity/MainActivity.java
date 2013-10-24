@@ -6,6 +6,7 @@ import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.preferences.Preferences;
 import in.co.madhur.mapmylocation.preferences.Preferences.Keys;
 import in.co.madhur.mapmylocation.preferences.Preferences.Keys.*;
+import in.co.madhur.mapmylocation.recievers.SMSReciever;
 import in.co.madhur.mapmylocation.service.Alarms;
 import in.co.madhur.mapmylocation.service.LiveTrackService;
 import in.co.madhur.mapmylocation.util.AppLog;
@@ -22,11 +23,13 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
@@ -157,17 +160,23 @@ public class MainActivity extends PreferenceActivity implements
 	private void UpdateTrackMeEnabled(Boolean enabledTrackme)
 	{
 		Preference settingsTrackme = findPreference(Preferences.Keys.SETTINGS_TRACKME.key);
+		Preference settingsEnableTrackme = findPreference(Preferences.Keys.ENABLE_TRACKME.key);
+		
+		ComponentName compName=new ComponentName(this, SMSReciever.class);
 		if (enabledTrackme == null)
 			enabledTrackme = appPreferences.isTrackMeEnabled();
 
 		if (enabledTrackme)
 		{
-
+			getPackageManager().setComponentEnabledSetting(compName, PackageManager.COMPONENT_ENABLED_STATE_DEFAULT, PackageManager.DONT_KILL_APP);
 			settingsTrackme.setEnabled(true);
+			settingsEnableTrackme.setSummary(R.string.pref_enable_trackme_desc_enabled);
 		}
 		else
 		{
+			getPackageManager().setComponentEnabledSetting(compName, PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
 			settingsTrackme.setEnabled(false);
+			settingsEnableTrackme.setSummary(R.string.pref_enable_trackme_desc);
 
 		}
 
@@ -518,16 +527,6 @@ public class MainActivity extends PreferenceActivity implements
 			public boolean onPreferenceChange(Preference preference, Object newValue)
 			{
 				boolean newVal = (Boolean) newValue;
-				if (newVal)
-				{
-
-					preference.setSummary(R.string.pref_enable_trackme_desc_enabled);
-
-				}
-				else
-				{
-					preference.setSummary(R.string.pref_enable_trackme_desc);
-				}
 				UpdateTrackMeEnabled(newVal);
 
 				return true;
@@ -547,13 +546,14 @@ public class MainActivity extends PreferenceActivity implements
 				if (newVal)
 				{
 					new Alarms(MainActivity.this, appPreferences).Schedule();
-					Log.v(App.TAG, "Scheduling FB Posts at");
 				}
 				else
 				{
 					new Alarms(MainActivity.this, appPreferences).cancel();
-					Log.v(App.TAG, "Cancelled live track service");
+					
 				}
+				showToastRequired(newVal);
+				
 				return true;
 			}
 		});
@@ -579,6 +579,12 @@ public class MainActivity extends PreferenceActivity implements
 
 			}
 		});
+	}
+
+	protected void showToastRequired(boolean newVal)
+	{
+		// TODO Auto-generated method stub
+		
 	}
 
 }

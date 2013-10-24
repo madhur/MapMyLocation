@@ -42,7 +42,7 @@ public final class Preferences
 		SECRET_CODE("pref_setsecretcode"),
 		ALLOW_CONTACTS("pref_onlyallowcontacts"),
 		SELECT_CONTACTS("pref_selectcontacts"),
-		MAX_RATE("pref_max_rate"),
+//		MAX_RATE("pref_max_rate"),
 		ENABLE_LIVETRACK("pref_enable_livetrack"),
 		CONNECT_FB("pref_connectfb"),
 		FB_INTERVAL("pref_fbinterval"),
@@ -129,12 +129,12 @@ public final class Preferences
 		
 	}
 	
-	public int getMaxRate()
-	{
-		return getStringAsInt(Keys.MAX_RATE.key, Defaults.MAX_SMS_RATE);
-		
-		
-	}
+//	public int getMaxRate()
+//	{
+//		return getStringAsInt(Keys.MAX_RATE.key, Defaults.MAX_SMS_RATE);
+//		
+//		
+//	}
 	
 	public String getFBFriends()
 	{

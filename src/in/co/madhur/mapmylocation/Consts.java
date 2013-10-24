@@ -19,8 +19,6 @@ public final class Consts {
 	
 	public static enum FBPrivacies
 	{
-		
-		
 		EVERYONE("EVERYONE"),
 		FRIENDS_OF_FRIENDS("FRIENDS_OF_FRIENDS"),
 		FRIENDS("FRIENDS"),
@@ -37,7 +35,6 @@ public final class Consts {
 		@Override
 		public String toString()
 		{
-			// TODO Auto-generated method stub
 			return Key;
 		}
 		

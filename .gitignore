@@ -38,5 +38,6 @@ gen-external-apklibs/
 .gradle
 build
 facebooksdk
+appcompat
 
 .settings
