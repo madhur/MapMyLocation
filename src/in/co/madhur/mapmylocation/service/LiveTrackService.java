@@ -93,9 +93,6 @@ public class LiveTrackService extends IntentService
 		if (!liveTrackEanbled)
 			return;
 
-		// Check if Facebook is connected. If not, post a notification to
-		// TODO: connect to Facebook. This should open the app, instead of
-		// dismissing
 		boolean fbConnected = appPrefences.isFBConnected();
 		if (!fbConnected)
 		{
@@ -126,6 +123,13 @@ public class LiveTrackService extends IntentService
 			return;
 		}
 
+		if (!(Connection.isBackGroundDataEnabled(this) && Connection.isConnected(this)))
+		{
+			appLog.append("No Connection to network or background data disabled");
+			stopSelf();
+			return;
+		}
+
 		Coordinates result = getLocation(appPrefences.getThreadTimeout(), appPrefences.getLocationTimeout());
 
 		if (result == null)
@@ -150,62 +154,76 @@ public class LiveTrackService extends IntentService
 		try
 		{
 			privacyOptions = GetPrivacyJson(fbPrivacy);
-			Log.v(App.TAG, privacyOptions.toString());
 		}
 		catch (JSONException e)
 		{
-			// TODO Auto-generated catch block
+			appLog.append(e.getMessage());
 			Log.e(App.TAG, e.getMessage());
 		}
 		catch (EmptyFriendsException e)
 		{
-			NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.FB_FAILURE,  this.getString(e.errorResourceId()));
+			NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.FB_FAILURE, this.getString(e.errorResourceId()));
 			nm.notify(0, builder.build());
+			stopSelf();
 			return;
 		}
 
-		Response fbResponse = PostToFB(session, fbMessage, privacyOptions, fbUrl);
-
-		if (fbResponse.getError() == null)
+		Response fbResponse = null;
+		try
 		{
-
-			if (showNotification)
-			{
-				NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.FB_POSTED);
-				nm.notify(0, builder.build());
-			}
+			fbResponse = PostToFB(session, fbMessage, privacyOptions, fbUrl);
 		}
-		else
+		catch (Exception e)
 		{
-			appLog.append(fbResponse.getError().getErrorMessage());
-			if (showNotification)
+			Log.e(App.TAG, e.getMessage());
+			appLog.append(e.getMessage());
+		}
+
+		if (fbResponse != null)
+		{
+			if (fbResponse.getError() == null)
 			{
-				NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.FB_FAILURE, fbResponse.getError().getErrorMessage());
-				nm.notify(0, builder.build());
+
+				if (showNotification)
+				{
+					NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.FB_POSTED);
+					nm.notify(0, builder.build());
+				}
+			}
+			else
+			{
+				appLog.append("Error while posting to Facebook:"
+						+ fbResponse.getError().getErrorMessage());
+				if (showNotification)
+				{
+					NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.FB_FAILURE);
+					nm.notify(0, builder.build());
+				}
 			}
 		}
 
 	}
 
-	private JSONObject GetPrivacyJson(String fbPrivacy) throws JSONException, EmptyFriendsException
+	private JSONObject GetPrivacyJson(String fbPrivacy) throws JSONException,
+			EmptyFriendsException
 	{
 		JSONObject jsonObject = new JSONObject();
 
 		if (!fbPrivacy.equals(Consts.FBPrivacies.CUSTOM.toString()))
 		{
-			
+
 			jsonObject.put("value", fbPrivacy);
 			return jsonObject;
 		}
 		else
 		{
 			jsonObject.put("value", "CUSTOM");
-			
+
 			HashMap<String, String> customFriends = null;
 			try
 			{
-				customFriends=appPrefences.getCustomFriends();
-				if(customFriends== null || customFriends.size()==0)
+				customFriends = appPrefences.getCustomFriends();
+				if (customFriends == null || customFriends.size() == 0)
 					throw new EmptyFriendsException();
 			}
 			catch (JsonParseException e)
@@ -221,31 +239,30 @@ public class LiveTrackService extends IntentService
 			{
 				Log.e(App.TAG, e.getMessage());
 			}
-			
-			
-			String commaSeperatedIds=GetCommaSeparetedIds(customFriends);
+
+			String commaSeperatedIds = GetCommaSeparetedIds(customFriends);
 			jsonObject.put("allow", commaSeperatedIds);
-			
+
 			return jsonObject;
-			
+
 		}
 
 	}
 
 	private String GetCommaSeparetedIds(HashMap<String, String> customFriends)
 	{
-		StringBuilder sbr=new StringBuilder();
-		Set<String> ids=customFriends.keySet();
-		Iterator<String> itr=ids.iterator();
-		while(itr.hasNext())
+		StringBuilder sbr = new StringBuilder();
+		Set<String> ids = customFriends.keySet();
+		Iterator<String> itr = ids.iterator();
+		while (itr.hasNext())
 		{
-			
+
 			sbr.append(itr.next());
 			sbr.append(',');
-			
+
 		}
-		
-		return sbr.toString().substring(0, sbr.length()-1);
+
+		return sbr.toString().substring(0, sbr.length() - 1);
 	}
 
 	private Session GetSession()
@@ -280,16 +297,7 @@ public class LiveTrackService extends IntentService
 			}
 		});
 
-		Response fbResponse = null;
-		try
-		{
-			fbResponse = myRequest.executeAndWait();
-		}
-		catch (Exception e)
-		{
-			Log.e(App.TAG, e.getMessage());
-			appLog.append(e.getMessage());
-		}
+		Response fbResponse = myRequest.executeAndWait();
 
 		return fbResponse;
 	}

@@ -58,7 +58,7 @@
     <string name="noti_loc_response">Location sent</string>
     <string name="noti_loc_failure">Could not obtain location. Make sure you have enabled access to your location in the \'Location Access\' settings.</string>
     <string name="noti_fb_posted">Your location was successfully posted to Facebook</string>
-    <string name="noti_fb_failure">Could not post location to Facebook. Make sure you have active data or WiFi connection</string>
+    <string name="noti_fb_failure">Could not post location to Facebook. The application will retry in few minutes</string>
     <string name="noti_fb_session_failure">Your facebook session has expired. Please connect again in Settings</string>
     <string name="noti_fb_not_connected">Your Facebook account is not integrated. Please connect your Facebook account</string>
     
