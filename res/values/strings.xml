@@ -77,4 +77,15 @@
  	  <string name="action_removefriend">Remove friend</string>
  	  <string name="action_done">Done</string>
  	  
+ 	  <string name="dialog_zerofriends">You must select atleast one friend</string>
+ 	  <string name="noti_zerofriends">Could not post location to Facebook. You must select atleast one friend in settings</string>
+ 	  <string name="toast_livetrackenabled">LiveTrack enabled. Your location will be posted at every %s</string>
+ 	  <string name="toast_livetrackenabled_fbdisconnected">LiveTrack enabled. Please connect your facebook account in LiveTrack settings</string>
+ 	  <string name="pref_adv">Advanced Preferences</string>
+ 	  <string name="pref_adv_desc">Advanced Preferences</string>
+ 	  <string name="pref_loctimeout">Location polling timeout</string>
+ 	  <string name="pref_threadtimeout">Location polling thread timeout</string>
+ 	  <string name="pref_threadtimeout_desc">Timeout interval after which thread initiated to get the location times out.This setting is for advanced users only.Do not change this value unless you know what you are doing</string>
+ 	  <string name="pref_loctimeout_desc">Timeout interval for which application polls GPS and network listeners. You might want to increase this value if you are getting frequent timeout errors in logs. This setting is for advanced users only. 
+ 	      Do not change this value unless you know what you are doing</string>
 </resources>

@@ -16,6 +16,7 @@
 
 package in.co.madhur.mapmylocation.activity;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.nfc.Tag;
@@ -124,8 +125,8 @@ public class FriendPickerActivity extends ActionBarActivity
 				return true;
 
 			case R.id.action_done:
-				saveFriends();
-				finish();
+				if(saveFriends())
+					finish();
 				return true;
 
 			default:
@@ -135,8 +136,16 @@ public class FriendPickerActivity extends ActionBarActivity
 
 	}
 
-	private void saveFriends()
+	private boolean saveFriends()
 	{
+		int countItems=listView.getCount();
+		if(countItems==0)
+		{
+			new AlertDialog.Builder(this).setTitle(R.string.app_name).setMessage(R.string.dialog_zerofriends).setNeutralButton(android.R.string.ok, null).create().show();
+			return false;
+		}
+		
+		
 		HashMapAdapter hashMapAdapter=(HashMapAdapter) listView.getAdapter();
 		try
 		{
@@ -149,6 +158,8 @@ public class FriendPickerActivity extends ActionBarActivity
 			
 			e.printStackTrace();
 		}
+		
+		return true;
 	}
 	
 	

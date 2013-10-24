@@ -44,6 +44,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.webkit.WebView;
+import android.widget.Toast;
 
 import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
 import static in.co.madhur.mapmylocation.App.TAG;
@@ -112,8 +113,13 @@ public class MainActivity extends PreferenceActivity implements
 
 			case R.id.action_about:
 				show(Dialogs.ABOUT_DIALOG);
-
+				
 				return true;
+				
+			case R.id.action_advpref:
+				Intent i=new Intent();
+				i.setClass(this, AdvancedPreferencesActivity.class);
+				startActivity(i);
 
 			default:
 				return super.onMenuItemSelected(featureId, item);
@@ -583,7 +589,27 @@ public class MainActivity extends PreferenceActivity implements
 
 	protected void showToastRequired(boolean newVal)
 	{
-		// TODO Auto-generated method stub
+		if(newVal)
+		{
+			boolean isFbConected=appPreferences.isFBConnected();
+			ListPreference intervalPreference=(ListPreference) findPreference(Keys.FB_INTERVAL.key);
+			String interval=(String) intervalPreference.getEntry();
+			StringBuilder sbr=new StringBuilder();
+			
+			
+			if(isFbConected)
+			{
+				
+				sbr.append(String.format(getString(R.string.toast_livetrackenabled), interval));
+			}
+			else
+			{
+				
+				sbr.append(getString(R.string.toast_livetrackenabled_fbdisconnected));
+			}
+			Toast.makeText(this, sbr.toString(), Toast.LENGTH_SHORT).show();
+			
+		}
 		
 	}
 

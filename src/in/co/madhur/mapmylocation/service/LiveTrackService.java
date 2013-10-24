@@ -21,6 +21,7 @@ import in.co.madhur.mapmylocation.tasks.NotificationType;
 import in.co.madhur.mapmylocation.tasks.LocationTask.LocationResultChild;
 import in.co.madhur.mapmylocation.util.AppLog;
 import in.co.madhur.mapmylocation.activity.ToastActivity;
+import in.co.madhur.mapmylocation.exceptions.EmptyFriendsException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -125,7 +126,7 @@ public class LiveTrackService extends IntentService
 			return;
 		}
 
-		Coordinates result = getLocation(Consts.MAX_WAIT_TIME, Consts.UPDATE_TIMEOUT);
+		Coordinates result = getLocation(appPrefences.getThreadTimeout(), appPrefences.getLocationTimeout());
 
 		if (result == null)
 		{
@@ -156,6 +157,12 @@ public class LiveTrackService extends IntentService
 			// TODO Auto-generated catch block
 			Log.e(App.TAG, e.getMessage());
 		}
+		catch (EmptyFriendsException e)
+		{
+			NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.FB_FAILURE,  this.getString(e.errorResourceId()));
+			nm.notify(0, builder.build());
+			return;
+		}
 
 		Response fbResponse = PostToFB(session, fbMessage, privacyOptions, fbUrl);
 
@@ -164,7 +171,6 @@ public class LiveTrackService extends IntentService
 
 			if (showNotification)
 			{
-				new Notifications(this);
 				NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.FB_POSTED);
 				nm.notify(0, builder.build());
 			}
@@ -174,7 +180,6 @@ public class LiveTrackService extends IntentService
 			appLog.append(fbResponse.getError().getErrorMessage());
 			if (showNotification)
 			{
-				new Notifications(this);
 				NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.FB_FAILURE, fbResponse.getError().getErrorMessage());
 				nm.notify(0, builder.build());
 			}
@@ -182,7 +187,7 @@ public class LiveTrackService extends IntentService
 
 	}
 
-	private JSONObject GetPrivacyJson(String fbPrivacy) throws JSONException
+	private JSONObject GetPrivacyJson(String fbPrivacy) throws JSONException, EmptyFriendsException
 	{
 		JSONObject jsonObject = new JSONObject();
 
@@ -200,6 +205,8 @@ public class LiveTrackService extends IntentService
 			try
 			{
 				customFriends=appPrefences.getCustomFriends();
+				if(customFriends== null || customFriends.size()==0)
+					throw new EmptyFriendsException();
 			}
 			catch (JsonParseException e)
 			{
@@ -208,11 +215,13 @@ public class LiveTrackService extends IntentService
 			catch (JsonMappingException e)
 			{
 				Log.e(App.TAG, e.getMessage());
+				throw new EmptyFriendsException();
 			}
 			catch (IOException e)
 			{
 				Log.e(App.TAG, e.getMessage());
 			}
+			
 			
 			String commaSeperatedIds=GetCommaSeparetedIds(customFriends);
 			jsonObject.put("allow", commaSeperatedIds);

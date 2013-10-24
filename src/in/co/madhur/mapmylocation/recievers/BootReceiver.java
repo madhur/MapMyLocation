@@ -13,7 +13,9 @@ public class BootReceiver extends BroadcastReceiver
 	{
 		Alarms alarms=new Alarms(context);
 		if(alarms.shouldSchedule())
+		{
 			alarms.Schedule();
+		}
 	}
 
 }

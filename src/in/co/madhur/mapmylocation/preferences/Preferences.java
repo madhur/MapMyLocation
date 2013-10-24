@@ -58,6 +58,8 @@ public final class Preferences
 		SETTINGS_TRACKME("pref_settings_trackme"),
 		SETTINGS_LIVETRACK("pref_settings_livetrack"),
 		FB_FRIENDS_CUSTOM("pref_fb_friends_custom"),
+		LOC_TIMEOUT("pref_loctimeout"),
+		THREAD_TIMEOUT("pref_threadimeout"),
 		FB_USERNAME("fb_username");
 		
 		public final String key;
@@ -176,6 +178,8 @@ public final class Preferences
 		
 	}
 	
+	
+	
 	public boolean showTrackMeNotifications()
 	{
 		return sharedPreferences.getBoolean(Keys.SHOW_TRACKME_NOTIFICATION.key, true);
@@ -253,6 +257,22 @@ public final class Preferences
 	public void setListener(OnSharedPreferenceChangeListener listener)
 	{
 		sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
+		
+	}
+	
+	public int getLocationTimeout()
+	{
+		String timeout=sharedPreferences.getString(Keys.LOC_TIMEOUT.key, Defaults.UPDATE_TIMEOUT);
+		
+		return Integer.parseInt(timeout)*1000;
+		
+	}
+	
+	public int getThreadTimeout()
+	{
+		String timeout=sharedPreferences.getString(Keys.THREAD_TIMEOUT.key, Defaults.MAX_WAIT_TIME);
+		
+		return Integer.parseInt(timeout)*1000;
 		
 	}
 	

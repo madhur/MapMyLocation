@@ -1,6 +1,7 @@
 package in.co.madhur.mapmylocation.service;
 
 import in.co.madhur.mapmylocation.App;
+import in.co.madhur.mapmylocation.preferences.Preferences;
 import in.co.madhur.mapmylocation.tasks.LocationTask;
 import in.co.madhur.mapmylocation.util.AppLog;
 import android.app.Service;
@@ -54,7 +55,7 @@ public class SMSService extends Service
 		appLog.append("Starting task to get location");
 		
 		
-		new LocationTask(this, showNotification, sender, dispSender, uniqueId, appLog)
+		new LocationTask(this, showNotification, sender, dispSender, uniqueId, appLog, new Preferences(this))
 				.execute(startId);
 
 		return START_NOT_STICKY;

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <PreferenceCategory android:title="@string/pref_adv" android:summary="@string/pref_adv_desc">
+        <EditTextPreference android:key="pref_loctimeout" android:inputType="number" android:title="@string/pref_loctimeout" android:summary="@string/pref_loctimeout_desc" android:dialogTitle="@string/pref_loctimeout" android:defaultValue="5"/>
+        <EditTextPreference android:key="pref_threadtimeout" android:inputType="number" android:title="@string/pref_threadtimeout" android:summary="@string/pref_threadtimeout_desc" android:dialogTitle="@string/pref_threadtimeout" android:defaultValue="10"/>
+    </PreferenceCategory>
+    
+    
+
+</PreferenceScreen>

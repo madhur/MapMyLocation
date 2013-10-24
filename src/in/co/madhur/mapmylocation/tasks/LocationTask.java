@@ -9,6 +9,7 @@ import in.co.madhur.mapmylocation.location.Coordinates;
 import in.co.madhur.mapmylocation.location.LocationGetter;
 import in.co.madhur.mapmylocation.location.LocationResolver;
 import in.co.madhur.mapmylocation.location.LocationResult;
+import in.co.madhur.mapmylocation.preferences.Preferences;
 import in.co.madhur.mapmylocation.service.Notifications;
 import in.co.madhur.mapmylocation.service.SMSService;
 import in.co.madhur.mapmylocation.util.AppLog;
@@ -56,6 +57,7 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 	private final LocationResult locationResult = new LocationResultChild();
 	AppLog appLog;
 	//private static AtomicInteger notificationCounter;
+	Preferences preferences;
 	
 	@Override
 	protected void onPreExecute()
@@ -75,7 +77,7 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 	
 	
 	
-	public LocationTask(SMSService context, boolean showNotification, String sender, String dispSender, int msgStamp, AppLog appLog)
+	public LocationTask(SMSService context, boolean showNotification, String sender, String dispSender, int msgStamp, AppLog appLog, Preferences appPreferences)
 	{
 		this.context=context;		
 		this.showNotification=showNotification;
@@ -84,6 +86,7 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 		this.notificationId=msgStamp;
 		this.dispSender=dispSender;
 		this.appLog=appLog;
+		this.preferences=appPreferences;
 	}
 
 	@Override
@@ -92,7 +95,7 @@ public class LocationTask extends AsyncTask<Integer, Integer, Coordinates>
 		if(LOCAL_LOGV)
 			Log.v(TAG, "doInBackground("+params+")");
 		
-		Coordinates location=getLocation(Consts.MAX_WAIT_TIME, Consts.UPDATE_TIMEOUT);
+		Coordinates location=getLocation(preferences.getThreadTimeout(), preferences.getLocationTimeout());
 		return location;
 	}
 	
