@@ -35,6 +35,8 @@ import android.widget.Button;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.facebook.AppEventsLogger;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
@@ -330,7 +332,16 @@ public class FriendPickerActivity extends ActionBarActivity
 
 	private void onClickPickFriends()
 	{
-		startPickFriendsActivity();
+		boolean fbConnected=appPreferences.isFBConnected();
+		if(fbConnected)
+		{
+			startPickFriendsActivity();
+		}
+		else
+		{
+			
+			Toast.makeText(this, getString(R.string.noti_fb_not_connected), Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	private void startPickFriendsActivity()

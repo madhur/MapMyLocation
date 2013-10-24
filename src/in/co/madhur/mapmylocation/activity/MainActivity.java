@@ -327,14 +327,18 @@ public class MainActivity extends PreferenceActivity implements
 	private void UpdateFBConnected()
 	{
 		CheckBoxPreference fbConnected = (CheckBoxPreference) findPreference(Preferences.Keys.CONNECT_FB.key);
-
+		
+		String summary;
 		Session fbSession = Session.openActiveSessionFromCache(this);
 
 		if (fbSession == null)
 			fbSession = Session.getActiveSession();
 
 		if (fbSession != null && fbSession.isOpened())
+		{
 			fbConnected.setChecked(true);
+			summary = getString(R.string.fb_already_connected);
+		}
 		else
 		{
 			if (fbSession != null)
@@ -348,13 +352,8 @@ public class MainActivity extends PreferenceActivity implements
 
 			}
 			fbConnected.setChecked(false);
-		}
-
-		String summary;
-		if (fbConnected.isChecked())
-			summary = getString(R.string.fb_already_connected);
-		else
 			summary = getString(R.string.fb_needs_connecting);
+		}
 
 		fbConnected.setSummary(summary);
 

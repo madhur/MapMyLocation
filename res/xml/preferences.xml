@@ -79,7 +79,7 @@
             <ListPreference android:entries="@array/pref_fbfriends" android:entryValues="@array/pref_fbfriends_values" android:defaultValue="FRIENDS"
                 android:key="pref_selectfbfriends"
                 android:summary="@string/pref_selectfbfriends_desc"
-                android:title="@string/pref_selectfbfriends" />
+                android:title="@string/pref_selectfbfriends" android:dependency="" />
 
             <EditTextPreference
                 android:key="pref_fbmessage"
