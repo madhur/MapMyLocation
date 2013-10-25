@@ -101,16 +101,16 @@ public final class Preferences
 	{
 		String latitude = sharedPreferences.getString(Keys.LAST_LATITUDE.key, "");
 		String longitude = sharedPreferences.getString(Keys.LAST_LONGITUDE.key, "");
-		String timestamp = sharedPreferences.getString(Keys.LAST_LOCATION_TIME.key, "");
+//		String timestamp = sharedPreferences.getString(Keys.LAST_LOCATION_TIME.key, "");
 
 		double dlat, dlong;
-		Date dtime = null;
+//		Date dtime = null;
 
 		try
 		{
 			dlat = Double.parseDouble(latitude);
 			dlong = Double.parseDouble(longitude);
-			Date.parse(timestamp);
+//			Date.parse(timestamp);
 		}
 		catch (NumberFormatException e)
 		{
@@ -118,7 +118,7 @@ public final class Preferences
 			return null;
 		}
 
-		return new Coordinates(dlat, dlong, dtime);
+		return new Coordinates(dlat, dlong);
 
 	}
 
@@ -126,8 +126,8 @@ public final class Preferences
 	{
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		editor.putString(Keys.LAST_LATITUDE.key, String.valueOf(result.getLatitude()));
-		editor.putString(Keys.LAST_LATITUDE.key, String.valueOf(result.getLatitude()));
-		editor.putString(Keys.LAST_LOCATION_TIME.key, result.getTimeStamp());
+		editor.putString(Keys.LAST_LONGITUDE.key, String.valueOf(result.getLongitude()));
+//		editor.putString(Keys.LAST_LOCATION_TIME.key, result.getTimeStamp());
 		editor.commit();
 
 	}

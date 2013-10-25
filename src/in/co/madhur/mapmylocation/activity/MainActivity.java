@@ -160,11 +160,12 @@ public class MainActivity extends PreferenceActivity implements
 
 	private void CheckLastLocationEnabled()
 	{
-		CheckBoxPreference shareLocPreference=(CheckBoxPreference) findPreference(Preferences.Keys.PREF_SHARE_LOC.key);
+		Preference shareLocPreference=(Preference) findPreference(Preferences.Keys.PREF_SHARE_LOC.key);
 		Coordinates result=appPreferences.getLastLocation();
 		if(result==null)
 			shareLocPreference.setEnabled(false);
-		
+		else
+			shareLocPreference.setEnabled(true);
 	}
 
 	private void CheckLocation()

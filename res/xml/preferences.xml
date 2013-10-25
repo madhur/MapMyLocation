@@ -86,7 +86,7 @@
                 android:summary="@string/pref_fbmessage_desc"
                 android:title="@string/pref_fbmessage" />
             
-            <CheckBoxPreference android:title="pref_enablegeocode" android:summary="pref_enablegeocode_desc" android:key="pref_enablegeocode" android:defaultValue="false"/>
+            <CheckBoxPreference android:title="@string/pref_enablegeocode" android:summary="@string/pref_enablegeocode_desc" android:key="pref_enablegeocode" android:defaultValue="false"/>
 
             <CheckBoxPreference
                 android:defaultValue="true"

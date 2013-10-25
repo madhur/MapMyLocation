@@ -155,6 +155,7 @@ public class LiveTrackService extends IntentService
 		}
 		
 		List<Address> addresses = null;
+		String name = null, caption=null, description=null;
 		if(appPrefences.isGeoCodeEnabled())
 		{
 			Geocoder geoCoder=new Geocoder(this);
@@ -168,20 +169,61 @@ public class LiveTrackService extends IntentService
 				e.printStackTrace();
 			}
 			
+			
 			if(addresses!=null && addresses.size() > 0)
 			{
 				
 				Address address=addresses.get(0);
+				name=address.getSubLocality();
+				caption=address.getSubLocality();
+				int lines=address.getMaxAddressLineIndex();
+				
+				if(lines!=-1)
+				{
+					StringBuilder sbr=new StringBuilder();
+					for (int i=0;i<lines;++i)
+					{
+						sbr.append(address.getAddressLine(i));
+						sbr.append(" ");
+						Log.v(TAG, "Address line :"+ i +address.getAddressLine(i));
+					}
+					
+					description=sbr.toString();
+				}
+				
+				
+				
 				
 				if(App.LOCAL_LOGV)
 				{
 					
-					Log.v(TAG, address.getLocality());
-					Log.v(TAG, address.getFeatureName());
-					Log.v(TAG, address.getAdminArea());
-					Log.v(TAG, address.getPostalCode());
-					Log.v(TAG, address.getSubAdminArea());
-					Log.v(TAG, address.getSubAdminArea());
+					if(address.getLocality()!=null)
+					Log.v(TAG, "Locality:"+address.getLocality());
+					if(address.getFeatureName()!=null)
+					Log.v(TAG, "Feature Name:"+address.getFeatureName());
+					if(address.getAdminArea()!=null)
+					Log.v(TAG, "Admin area:"+address.getAdminArea());
+					if(address.getSubAdminArea()!=null)
+					Log.v(TAG, "Subadmin area:"+address.getSubAdminArea());
+					if(address.getSubLocality()!=null)
+					Log.v(TAG, "Sublocality:"+address.getSubLocality());
+					if(address.getThoroughfare()!=null)
+						Log.v(TAG, "Thoroughfare:"+address.getThoroughfare());
+					if(address.getSubThoroughfare()!=null)
+						Log.v(TAG, "SubThoroughfare:"+address.getSubThoroughfare());
+					if(address.getPremises()!=null)
+						Log.v(TAG, "Premises:"+address.getPremises());
+					
+					int lines1=address.getMaxAddressLineIndex();
+					if(lines1!=-1)
+					{
+						
+						for (int i=0;i<lines1;++i)
+						{
+							Log.v(TAG, "Address line :"+ i +address.getAddressLine(i));
+						}
+					}
+					
 				}
 			}
 			
@@ -213,7 +255,7 @@ public class LiveTrackService extends IntentService
 		Response fbResponse = null;
 		try
 		{
-			fbResponse = PostToFB(session, fbMessage, privacyOptions, fbUrl);
+			fbResponse = PostToFB(session, fbMessage, privacyOptions, fbUrl, name , caption, description);
 		}
 		catch (Exception e)
 		{
@@ -319,7 +361,7 @@ public class LiveTrackService extends IntentService
 
 	}
 
-	private Response PostToFB(Session session, String message, JSONObject privacyOptions, String locationUrl)
+	private Response PostToFB(Session session, String message, JSONObject privacyOptions, String locationUrl, String name, String caption, String description)
 	{
 		GraphObject graphObject = GraphObject.Factory.create();
 
@@ -327,6 +369,9 @@ public class LiveTrackService extends IntentService
 			graphObject.setProperty("message", message);
 		graphObject.setProperty("link", locationUrl);
 		graphObject.setProperty("privacy", privacyOptions.toString());
+		graphObject.setProperty("name", name);
+		graphObject.setProperty("caption", caption);
+		graphObject.setProperty("description", description);
 
 		Request myRequest = Request.newPostRequest(session, "/me/feed/", graphObject, new Callback()
 		{
@@ -334,7 +379,8 @@ public class LiveTrackService extends IntentService
 			@Override
 			public void onCompleted(Response response)
 			{
-				Log.v("Tag", response.toString());
+				if(LOCAL_LOGV)
+					Log.v(App.TAG, response.toString());
 
 			}
 		});

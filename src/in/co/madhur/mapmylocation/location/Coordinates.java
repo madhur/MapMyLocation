@@ -9,20 +9,11 @@ public class Coordinates
 	public static final Coordinates UNDEFINED = null;
 	private double latitude;
 	private double longitude;
-	private Date timeStamp;
 	
 	public Coordinates(double d, double e)
 	{
 		this.latitude=d;
 		this.longitude=e;
-		
-	}
-	
-	public Coordinates(double d, double e, Date timeStamp)
-	{
-		this.latitude=d;
-		this.longitude=e;
-		this.timeStamp=timeStamp;
 		
 	}
 	
@@ -32,11 +23,7 @@ public class Coordinates
 		
 	}
 	
-	public String getTimeStamp()
-	{
-		
-		return timeStamp.toString();
-	}
+	
 	
 	public double getLongitude()
 	{
