@@ -1,25 +1,16 @@
 package in.co.madhur.mapmylocation.tasks;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
 import in.co.madhur.mapmylocation.App;
 import in.co.madhur.mapmylocation.Consts;
 import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.location.Coordinates;
-import in.co.madhur.mapmylocation.location.LocationGetter;
 import in.co.madhur.mapmylocation.location.LocationResolver;
 import in.co.madhur.mapmylocation.location.LocationResult;
 import in.co.madhur.mapmylocation.preferences.Preferences;
 import in.co.madhur.mapmylocation.service.Notifications;
 import in.co.madhur.mapmylocation.service.SMSService;
 import in.co.madhur.mapmylocation.util.AppLog;
-import in.co.madhur.mapmylocation.activity.ToastActivity;
-
-import android.annotation.SuppressLint;
-import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Notification;
-import android.app.Notification.InboxStyle;
 import android.app.NotificationManager;
 
 import android.app.PendingIntent;
@@ -27,17 +18,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.SmsManager;
-import android.text.format.DateFormat;
 import android.util.Log;
 
-import static in.co.madhur.mapmylocation.App.LOG;
 import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
 import static in.co.madhur.mapmylocation.App.TAG;
 

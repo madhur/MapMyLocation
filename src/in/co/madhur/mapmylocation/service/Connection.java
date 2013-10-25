@@ -1,10 +1,8 @@
 package in.co.madhur.mapmylocation.service;
 
-import in.co.madhur.mapmylocation.exceptions.NoConnectionException;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Build;
 
 public class Connection
 {

@@ -69,14 +69,14 @@
                 android:title="@string/pref_connectfb" />
 
             <ListPreference
-                android:defaultValue="300"
+                android:defaultValue="900"
                 android:entries="@array/pref_fbinterval"
                 android:entryValues="@array/pref_fbinterval_values"
                 android:key="pref_fbinterval"
                 android:summary="@string/pref_fbintervald_desc"
                 android:title="@string/pref_fbinterval" />
 
-            <ListPreference android:entries="@array/pref_fbfriends" android:entryValues="@array/pref_fbfriends_values" android:defaultValue="FRIENDS"
+            <ListPreference android:entries="@array/pref_fbfriends" android:entryValues="@array/pref_fbfriends_values" android:defaultValue="ALL_FRIENDS"
                 android:key="pref_selectfbfriends"
                 android:summary="@string/pref_selectfbfriends_desc"
                 android:title="@string/pref_selectfbfriends"  />

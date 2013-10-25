@@ -14,12 +14,9 @@
 
 package in.co.madhur.mapmylocation.service;
 
-import android.app.AlarmManager;
 import android.app.IntentService;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.PowerManager;
 
 abstract public class WakefulIntentService extends IntentService

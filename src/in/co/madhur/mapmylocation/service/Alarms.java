@@ -60,7 +60,8 @@ public class Alarms
 	{
 		Intent fbIntent=new Intent();
 		fbIntent.setAction(Consts.FB_POST_ACTION);
-		fbIntent.setClass(context , LiveTrackService.class);
+		// fbIntent.setClass(context , LiveTrackService.class);
+		fbIntent.setClass(context, LiveTrackWakefulService.class);
 		
 		return PendingIntent.getService(context , 0, fbIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		

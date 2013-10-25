@@ -7,15 +7,11 @@ import in.co.madhur.mapmylocation.util.AppLog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.ContactsContract.PhoneLookup;
 import android.telephony.SmsMessage;
 import android.text.format.DateFormat;
 import android.util.Log;
 
-import static in.co.madhur.mapmylocation.App.LOG;
 import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
 import static in.co.madhur.mapmylocation.App.TAG;
 

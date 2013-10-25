@@ -1,9 +1,7 @@
 package in.co.madhur.mapmylocation.activity;
 
-import in.co.madhur.mapmylocation.Consts;
 import in.co.madhur.mapmylocation.R;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.PreferenceActivity;
 
 public class AdvancedPreferencesActivity extends PreferenceActivity

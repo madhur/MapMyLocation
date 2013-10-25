@@ -7,9 +7,9 @@ import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import com.facebook.model.GraphUser;
 
+import android.annotation.TargetApi;
 import android.app.Application;
 import android.os.Build;
-import android.util.Log;
 
 @ReportsCrashes(formKey = "", // This is required for backward compatibility but
 								// not used
@@ -26,6 +26,7 @@ public class App extends Application
 
 	private Collection<GraphUser> selectedUsers;
  
+	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	@Override
 	public void onCreate()
 	{
@@ -33,6 +34,7 @@ public class App extends Application
 		super.onCreate();
 		if(!Build.PRODUCT.equals("sdk_x86"))
 			ACRA.init(this);
+		
 	}
 	
 	public Collection<GraphUser> getSelectedUsers()

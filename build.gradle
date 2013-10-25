@@ -11,18 +11,6 @@ buildscript {
 apply plugin: 'android'
 
 
-dependencies {
-   
-    compile project(':facebooksdk')
-    compile project(':appcompat')
-    compile files('libs/jackson-annotations-2.2.3.jar')
-    compile files('libs/jackson-core-2.2.3.jar')
-    compile files('libs/jackson-databind-2.2.3.jar')
-    compile files('libs/acra-4.5.0.jar')
-    compile files('appcompat/libs/android-support-v7-appcompat.jar')
-}
-
-
 
 android {
     buildToolsVersion "17.0"
@@ -41,6 +29,20 @@ android {
 
         instrumentTest.setRoot('tests')
     }
+    
+    
+dependencies {
+   
+    compile project(':facebooksdk')
+    compile project(':appcompat')
+    compile files('libs/jackson-annotations-2.2.3.jar')
+    compile files('libs/jackson-core-2.2.3.jar')
+    compile files('libs/jackson-databind-2.2.3.jar')
+    compile files('libs/acra-4.5.0.jar')
+    compile files('appcompat/libs/android-support-v7-appcompat.jar')
+}
+
+    
 
     signingConfigs {
     release {

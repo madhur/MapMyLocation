@@ -16,6 +16,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+	<uses-permission android:name="android.permission.WAKE_LOCK"/>
+	
 	
     <application
         android:allowBackup="true"
@@ -83,6 +85,12 @@
             android:name=".service.LiveTrackService"
             android:exported="false"
             android:label="Hermes LiveTrack Service" >
+        </service>
+        
+         <service
+            android:name=".service.LiveTrackWakefulService"
+            android:exported="false"
+            android:label="Hermes LiveTrack Wakeful Service" >
         </service>
          
     </application>

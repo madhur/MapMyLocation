@@ -5,16 +5,13 @@ import in.co.madhur.mapmylocation.preferences.Preferences;
 import in.co.madhur.mapmylocation.tasks.LocationTask;
 import in.co.madhur.mapmylocation.util.AppLog;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.format.DateFormat;
 import android.util.Log;
 
-import static in.co.madhur.mapmylocation.App.LOG;
 import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
-import static in.co.madhur.mapmylocation.App.TAG;
 
 
 public class SMSService extends Service

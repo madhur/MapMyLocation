@@ -9,16 +9,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import in.co.madhur.mapmylocation.App;
-import in.co.madhur.mapmylocation.Consts;
-import in.co.madhur.mapmylocation.location.Coordinates;
-import in.co.madhur.mapmylocation.location.LocationResolver;
-import in.co.madhur.mapmylocation.location.LocationResult;
-import in.co.madhur.mapmylocation.preferences.Preferences;
-import in.co.madhur.mapmylocation.tasks.NotificationType;
-import in.co.madhur.mapmylocation.util.AppLog;
-import in.co.madhur.mapmylocation.exceptions.EmptyFriendsException;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,19 +20,27 @@ import com.facebook.model.GraphObject;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import android.app.IntentService;
+import in.co.madhur.mapmylocation.App;
+import in.co.madhur.mapmylocation.Consts;
+import in.co.madhur.mapmylocation.exceptions.EmptyFriendsException;
+import in.co.madhur.mapmylocation.location.Coordinates;
+import in.co.madhur.mapmylocation.location.LocationResolver;
+import in.co.madhur.mapmylocation.location.LocationResult;
+import in.co.madhur.mapmylocation.preferences.Preferences;
+import in.co.madhur.mapmylocation.tasks.NotificationType;
+import in.co.madhur.mapmylocation.util.AppLog;
 import android.app.NotificationManager;
 import android.content.Intent;
 import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Looper;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
 import android.util.Log;
-import android.location.Geocoder;
 
-public class LiveTrackService extends IntentService
+public class LiveTrackWakefulService extends WakefulIntentService
 {
 	private Location location = null;
 	private final Object gotLocationLock = new Object();
@@ -51,15 +49,19 @@ public class LiveTrackService extends IntentService
 	Preferences appPrefences;
 	private AppLog appLog;
 
-	public LiveTrackService()
+	public LiveTrackWakefulService(String name)
 	{
-		super("Hermes Live Track Service");
+		super("Hermes Live Track Wakeful Service");
 	}
-
+	
+	public LiveTrackWakefulService()
+	{
+		super("Hermes Live Track Wakeful Service");
+	}
+	
 	@Override
 	public void onCreate()
 	{
-		// TODO Auto-generated method stub
 		super.onCreate();
 
 		appLog = new AppLog(DateFormat.getDateFormatOrder(this));
@@ -74,8 +76,9 @@ public class LiveTrackService extends IntentService
 			appLog.close();
 	}
 
+
 	@Override
-	protected void onHandleIntent(Intent intent)
+	protected void doWakefulWork(Intent intent)
 	{
 		appLog.append("Starting service to post to Facebook");
 		appPrefences = new Preferences(this);
@@ -106,6 +109,7 @@ public class LiveTrackService extends IntentService
 		Session session = GetSession();
 		if (session.isClosed())
 		{
+			
 			Log.e(App.TAG, "Cannot get session");
 			appLog.append("Failure: Facebook Session while posting");
 			if (showNotification)
@@ -117,6 +121,8 @@ public class LiveTrackService extends IntentService
 			stopSelf();
 			return;
 		}
+		
+		appLog.append("Session state:"+session.getState().name().toString());
 
 		Coordinates result = getLocation(appPrefences.getThreadTimeout(), appPrefences.getLocationTimeout());
 		
@@ -279,6 +285,7 @@ public class LiveTrackService extends IntentService
 			}
 		}
 
+
 	}
 
 	private JSONObject GetPrivacyJson(String fbPrivacy) throws JSONException,
@@ -372,7 +379,7 @@ public class LiveTrackService extends IntentService
 			@Override
 			public void onCompleted(Response response)
 			{
-				if(LOCAL_LOGV)
+				if (LOCAL_LOGV)
 					Log.v(App.TAG, response.toString());
 
 			}
@@ -408,9 +415,9 @@ public class LiveTrackService extends IntentService
 						}
 
 						Looper.prepare();
-						LocationResolver locationResolver = new LocationResolver(LiveTrackService.this, appLog);
+						LocationResolver locationResolver = new LocationResolver(LiveTrackWakefulService.this, appLog);
 						locationResolver.prepare();
-						locationResolver.getLocation(LiveTrackService.this, locationResult, updateTimeoutPar);
+						locationResolver.getLocation(LiveTrackWakefulService.this, locationResult, updateTimeoutPar);
 						Looper.loop();
 					}
 				}.start();
@@ -439,7 +446,7 @@ public class LiveTrackService extends IntentService
 
 			synchronized (gotLocationLock)
 			{
-				LiveTrackService.this.location = location;
+				LiveTrackWakefulService.this.location = location;
 				gotLocationLock.notifyAll();
 				Looper.myLooper().quit();
 			}

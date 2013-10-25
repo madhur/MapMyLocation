@@ -4,7 +4,6 @@ import in.co.madhur.mapmylocation.App;
 import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.activity.ToastActivity;
 import in.co.madhur.mapmylocation.tasks.NotificationType;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -20,12 +19,6 @@ public class Notifications
 	{
 
 		this.context = context;
-	}
-
-	private static NotificationManager GetNotificationManager(Context context)
-	{
-		return (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
-
 	}
 
 	public static NotificationCompat.Builder GetNotificationBuilder(Context context, NotificationType type)

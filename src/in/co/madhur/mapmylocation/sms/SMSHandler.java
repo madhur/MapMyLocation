@@ -1,24 +1,17 @@
 package in.co.madhur.mapmylocation.sms;
 
 import in.co.madhur.mapmylocation.App;
-import in.co.madhur.mapmylocation.location.Coordinates;
-import in.co.madhur.mapmylocation.location.LocationGetter;
 import in.co.madhur.mapmylocation.preferences.Preferences;
 import in.co.madhur.mapmylocation.service.SMSService;
-import in.co.madhur.mapmylocation.tasks.LocationTask;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract.PhoneLookup;
 import android.util.Log;
 
-import static in.co.madhur.mapmylocation.App.LOG;
 import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
-import static in.co.madhur.mapmylocation.App.TAG;
 
 public class SMSHandler
 {

@@ -1,16 +1,12 @@
 package in.co.madhur.mapmylocation.location;
 
-import static in.co.madhur.mapmylocation.App.LOG;
 import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
 import static in.co.madhur.mapmylocation.App.TAG;
 
-import static in.co.madhur.mapmylocation.App.TAG;
 import in.co.madhur.mapmylocation.App;
 import in.co.madhur.mapmylocation.util.AppLog;
 import android.content.Context;
-import android.location.Location;
 import android.location.LocationManager;
-import android.os.Looper;
 import android.text.format.DateFormat;
 import android.util.Log;
 

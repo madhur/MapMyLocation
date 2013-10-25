@@ -1,29 +1,22 @@
 package in.co.madhur.mapmylocation.activity;
 
 import in.co.madhur.mapmylocation.App;
+import in.co.madhur.mapmylocation.BuildConfig;
 import in.co.madhur.mapmylocation.Consts;
 import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.location.Coordinates;
 import in.co.madhur.mapmylocation.preferences.Preferences;
 import in.co.madhur.mapmylocation.preferences.Preferences.Keys;
-import in.co.madhur.mapmylocation.preferences.Preferences.Keys.*;
 import in.co.madhur.mapmylocation.recievers.SMSReciever;
 import in.co.madhur.mapmylocation.service.Alarms;
-import in.co.madhur.mapmylocation.service.LiveTrackService;
 import in.co.madhur.mapmylocation.util.AppLog;
 import in.co.madhur.mapmylocation.util.Util;
 
-import java.util.List;
-
-import com.facebook.RequestAsyncTask;
 import com.facebook.Session;
 
-import android.app.Activity;
-import android.app.AlarmManager;
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.PendingIntent;
-import android.app.Service;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,7 +24,9 @@ import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -47,7 +42,6 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
 import static in.co.madhur.mapmylocation.App.TAG;
 
 public class MainActivity extends PreferenceActivity implements
@@ -85,6 +79,17 @@ public class MainActivity extends PreferenceActivity implements
 		appPreferences = new Preferences(this);
 		appPreferences.setListener(listener);
 
+		setupStrictMode();
+
+	}
+
+	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
+	private void setupStrictMode()
+	{
+		if (BuildConfig.DEBUG
+				&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyFlashScreen().build());
+
 	}
 
 	@Override
@@ -114,11 +119,11 @@ public class MainActivity extends PreferenceActivity implements
 
 			case R.id.action_about:
 				show(Dialogs.ABOUT_DIALOG);
-				
+
 				return true;
-				
+
 			case R.id.action_advpref:
-				Intent i=new Intent();
+				Intent i = new Intent();
 				i.setClass(this, AdvancedPreferencesActivity.class);
 				startActivity(i);
 
@@ -154,15 +159,15 @@ public class MainActivity extends PreferenceActivity implements
 		UpdateFBFriendsLabel(null);
 
 		CheckLocation();
-		
+
 		CheckLastLocationEnabled();
 	}
 
 	private void CheckLastLocationEnabled()
 	{
-		Preference shareLocPreference=(Preference) findPreference(Preferences.Keys.PREF_SHARE_LOC.key);
-		Coordinates result=appPreferences.getLastLocation();
-		if(result==null)
+		Preference shareLocPreference = (Preference) findPreference(Preferences.Keys.PREF_SHARE_LOC.key);
+		Coordinates result = appPreferences.getLastLocation();
+		if (result == null)
 			shareLocPreference.setEnabled(false);
 		else
 			shareLocPreference.setEnabled(true);
@@ -180,8 +185,8 @@ public class MainActivity extends PreferenceActivity implements
 	{
 		Preference settingsTrackme = findPreference(Preferences.Keys.SETTINGS_TRACKME.key);
 		Preference settingsEnableTrackme = findPreference(Preferences.Keys.ENABLE_TRACKME.key);
-		
-		ComponentName compName=new ComponentName(this, SMSReciever.class);
+
+		ComponentName compName = new ComponentName(this, SMSReciever.class);
 		if (enabledTrackme == null)
 			enabledTrackme = appPreferences.isTrackMeEnabled();
 
@@ -340,7 +345,7 @@ public class MainActivity extends PreferenceActivity implements
 	private void UpdateFBConnected()
 	{
 		CheckBoxPreference fbConnected = (CheckBoxPreference) findPreference(Preferences.Keys.CONNECT_FB.key);
-		
+
 		String summary;
 		Session fbSession = Session.openActiveSessionFromCache(this);
 
@@ -395,18 +400,14 @@ public class MainActivity extends PreferenceActivity implements
 		ListPreference FBInterval = (ListPreference) findPreference(Preferences.Keys.FB_INTERVAL.key);
 		if (interval == null)
 		{
-			String entry = (String) FBInterval.getEntry();
-			FBInterval.setTitle(entry);
-
+			interval = FBInterval.getValue();
 		}
-		else
+		
+		int index = FBInterval.findIndexOfValue(interval);
+		if (index != -1)
 		{
-			int index = FBInterval.findIndexOfValue(interval);
-			if (index != -1)
-			{
-				interval = (String) FBInterval.getEntries()[index];
-				FBInterval.setTitle(interval);
-			}
+			interval = (String) FBInterval.getEntries()[index];
+			FBInterval.setTitle(interval);
 		}
 
 	}
@@ -416,18 +417,15 @@ public class MainActivity extends PreferenceActivity implements
 		ListPreference FBFriends = (ListPreference) findPreference(Preferences.Keys.FB_FRIENDS.key);
 		if (friends == null)
 		{
-			String entry = (String) FBFriends.getEntry();
-			FBFriends.setTitle(entry);
+			friends = FBFriends.getValue();
 
 		}
-		else
+		
+		int index = FBFriends.findIndexOfValue(friends);
+		if (index != -1)
 		{
-			int index = FBFriends.findIndexOfValue(friends);
-			if (index != -1)
-			{
-				friends = (String) FBFriends.getEntries()[index];
-				FBFriends.setTitle(friends);
-			}
+			friends = (String) FBFriends.getEntries()[index];
+			FBFriends.setTitle(friends);
 		}
 
 	}
@@ -568,10 +566,10 @@ public class MainActivity extends PreferenceActivity implements
 				else
 				{
 					new Alarms(MainActivity.this, appPreferences).cancel();
-					
+
 				}
 				showToastRequired(newVal);
-				
+
 				return true;
 			}
 		});
@@ -597,27 +595,26 @@ public class MainActivity extends PreferenceActivity implements
 
 			}
 		});
-		
+
 		findPreference(Preferences.Keys.PREF_SHARE_LOC.key).setOnPreferenceClickListener(new OnPreferenceClickListener()
 		{
-			
+
 			@Override
 			public boolean onPreferenceClick(Preference preference)
 			{
-				Coordinates result=appPreferences.getLastLocation();
-				if(result!=null)
+				Coordinates result = appPreferences.getLastLocation();
+				if (result != null)
 				{
-					Intent i=new Intent();
+					Intent i = new Intent();
 					i.setAction(Intent.ACTION_SEND);
 					i.setType("text/plain");
-					String message= String.format(Consts.GOOGLE_MAPS_URL,result.getLatitude(), result.getLongitude());
-					
+					String message = String.format(Consts.GOOGLE_MAPS_URL, result.getLatitude(), result.getLongitude());
+
 					i.putExtra(Intent.EXTRA_SUBJECT, "Sharing URL");
 					i.putExtra(Intent.EXTRA_TEXT, message);
-					
+
 					startActivity(i);
-					
-					
+
 				}
 				return false;
 			}
@@ -626,28 +623,27 @@ public class MainActivity extends PreferenceActivity implements
 
 	protected void showToastRequired(boolean newVal)
 	{
-		if(newVal)
+		if (newVal)
 		{
-			boolean isFbConected=appPreferences.isFBConnected();
-			ListPreference intervalPreference=(ListPreference) findPreference(Keys.FB_INTERVAL.key);
-			String interval=(String) intervalPreference.getEntry();
-			StringBuilder sbr=new StringBuilder();
-			
-			
-			if(isFbConected)
+			boolean isFbConected = appPreferences.isFBConnected();
+			ListPreference intervalPreference = (ListPreference) findPreference(Keys.FB_INTERVAL.key);
+			String interval = (String) intervalPreference.getEntry();
+			StringBuilder sbr = new StringBuilder();
+
+			if (isFbConected)
 			{
-				
+
 				sbr.append(String.format(getString(R.string.toast_livetrackenabled), interval));
 			}
 			else
 			{
-				
+
 				sbr.append(getString(R.string.toast_livetrackenabled_fbdisconnected));
 			}
 			Toast.makeText(this, sbr.toString(), Toast.LENGTH_SHORT).show();
-			
+
 		}
-		
+
 	}
 
 }

@@ -2,7 +2,6 @@ package in.co.madhur.mapmylocation.location;
 
 import in.co.madhur.mapmylocation.util.AppLog;
 
-import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -15,10 +14,8 @@ import android.os.Handler;
 import android.os.Handler.Callback;
 import android.os.Looper;
 import android.os.Message;
-import android.text.format.DateFormat;
 import android.util.Log;
 
-import static in.co.madhur.mapmylocation.App.LOG;
 import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
 import static in.co.madhur.mapmylocation.App.TAG;
 
@@ -30,7 +27,6 @@ public class LocationResolver
 	private boolean gpsEnabled = false;
 	private boolean networkEnabled = false;
 	private Handler locationTimeoutHandler;
-	private Context context;
 	private AppLog appLog;
 
 	private final Callback locationTimeoutCallback = new Callback()
@@ -181,7 +177,6 @@ public class LocationResolver
 
 	public LocationResolver(Context context2, AppLog appLog)
 	{
-		this.context=context2;
 		this.appLog=appLog;
 		
 	}

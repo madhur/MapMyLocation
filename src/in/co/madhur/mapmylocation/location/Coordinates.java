@@ -1,9 +1,5 @@
 package in.co.madhur.mapmylocation.location;
 
-import java.util.Date;
-
-import android.text.format.DateFormat;
-
 public class Coordinates
 {
 	public static final Coordinates UNDEFINED = null;
