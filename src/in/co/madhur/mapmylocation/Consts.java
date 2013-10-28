@@ -16,6 +16,8 @@ public final class Consts {
 	
 	public static String FB_POST_ACTION="FB_POST_ACTION";
 	
+	public static String DONATE_URL="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=G22C78FDUM2VY";
+	
 	public static enum FBPrivacies
 	{
 		EVERYONE("EVERYONE"),

@@ -91,4 +91,7 @@
  	      
  	  <string name="pref_enablegeocode">Enable Reverse Geocoding</string>
  	  <string name="pref_enablegeocode_desc">Enable translations of locations co-ordinates to addresses</string>
+ 	  
+ 	  <string name="pref_donate">Donate</string>
+ 	  <string name="pref_donate_desc">Donate securely using Paypal</string>
 </resources>

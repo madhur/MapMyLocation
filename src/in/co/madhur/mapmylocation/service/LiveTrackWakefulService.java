@@ -122,11 +122,9 @@ public class LiveTrackWakefulService extends WakefulIntentService
 			return;
 		}
 		
-		appLog.append("Session state:"+session.getState().name().toString());
-
 		Coordinates result = getLocation(appPrefences.getThreadTimeout(), appPrefences.getLocationTimeout());
 		
-		if(result!=null)
+		if(result!=null )
 		{
 			appPrefences.setLastLocation(result);
 			
@@ -136,7 +134,7 @@ public class LiveTrackWakefulService extends WakefulIntentService
 			appLog.append("Failure: Retrieving location while posting");
 			if (showNotification)
 			{
-				new Notifications(this);
+//				new Notifications(this);
 				NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.LOCATION_FAILURE);
 				nm.notify(0, builder.build());
 			}
@@ -277,7 +275,8 @@ public class LiveTrackWakefulService extends WakefulIntentService
 			{
 				appLog.append("Error while posting to Facebook:"
 						+ fbResponse.getError().getErrorMessage());
-				if (showNotification)
+				appLog.append("fbUrl:"+ fbUrl + "name:" +name + "caption:" + caption +"Description: " + description + "fbprivacy:" + fbPrivacy.toString());
+				if (showNotification) 
 				{
 					NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.FB_FAILURE);
 					nm.notify(0, builder.build());
@@ -373,6 +372,7 @@ public class LiveTrackWakefulService extends WakefulIntentService
 		graphObject.setProperty("caption", caption);
 		graphObject.setProperty("description", description);
 
+		
 		Request myRequest = Request.newPostRequest(session, "/me/feed/", graphObject, new Callback()
 		{
 
@@ -381,8 +381,15 @@ public class LiveTrackWakefulService extends WakefulIntentService
 			{
 				if (LOCAL_LOGV)
 					Log.v(App.TAG, response.toString());
+				
+				if(response.getError()!=null)
+				appLog.append("on request completed:"+ response.getError().getErrorMessage());
+				else
+					appLog.append("on request completed:"+ response.toString());	
 
 			}
+			
+			
 		});
 
 		Response fbResponse = myRequest.executeAndWait();
@@ -428,6 +435,7 @@ public class LiveTrackWakefulService extends WakefulIntentService
 		catch (InterruptedException e1)
 		{
 			Log.e(TAG, e1.getMessage());
+			appLog.append(e1.getMessage());
 		}
 
 		if (location != null)

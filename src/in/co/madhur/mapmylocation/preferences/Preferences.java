@@ -66,6 +66,7 @@ public final class Preferences
 		LAST_LATITUDE("last_latitude"),
 		LAST_LONGITUDE("last_longitude"),
 		PREF_SHARE_LOC("pref_shareloc"),
+		PREF_DONATE("pref_donate"),
 		LAST_LOCATION_TIME("last_location_time");
 
 		public final String key;

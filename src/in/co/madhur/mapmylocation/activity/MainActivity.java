@@ -24,6 +24,7 @@ import android.content.SharedPreferences;
 import android.content.DialogInterface.OnClickListener;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -591,6 +592,22 @@ public class MainActivity extends PreferenceActivity implements
 			public boolean onPreferenceClick(Preference preference)
 			{
 				show(Dialogs.ABOUT_DIALOG);
+				return true;
+
+			}
+		});
+		
+		findPreference(Preferences.Keys.PREF_DONATE.key).setOnPreferenceClickListener(new OnPreferenceClickListener()
+		{
+
+			@Override
+			public boolean onPreferenceClick(Preference preference)
+			{
+				Intent i=new Intent();
+				i.setAction(Intent.ACTION_VIEW);
+				i.setData(Uri.parse(Consts.DONATE_URL));
+				startActivity(i);
+				
 				return true;
 
 			}

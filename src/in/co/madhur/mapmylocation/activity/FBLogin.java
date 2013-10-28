@@ -1,6 +1,8 @@
 package in.co.madhur.mapmylocation.activity;
 
 
+import java.util.Arrays;
+
 import in.co.madhur.mapmylocation.Consts;
 import in.co.madhur.mapmylocation.R;
 import android.app.Activity;
@@ -15,6 +17,7 @@ import com.facebook.Session;
 import com.facebook.SessionState;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.Session.StatusCallback;
+import com.facebook.widget.LoginButton;
 
 import static in.co.madhur.mapmylocation.App.LOG;
 import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
@@ -33,6 +36,9 @@ public class FBLogin extends Activity
 		setContentView(R.layout.facebook);
 		uiHelper = new UiLifecycleHelper(this, statusCallback);
 		
+		LoginButton authButton = (LoginButton) this.findViewById(R.id.authButton);
+		
+		authButton.setPublishPermissions(Arrays.asList("publish_actions"));
 		
 		
 	}

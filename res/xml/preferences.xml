@@ -102,6 +102,12 @@
             android:key="pref_shareloc"
             android:summary="@string/pref_shareloc_desc"
             android:title="@string/pref_shareloc" />
+         <Preference
+            android:key="pref_donate"
+            android:summary="@string/pref_donate_desc"
+            android:title="@string/pref_donate" >
+        </Preference>
+        
         <Preference
             android:key="pref_about"
             android:summary="@string/pref_about_desc"
