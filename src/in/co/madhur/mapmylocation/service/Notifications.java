@@ -13,14 +13,6 @@ import android.util.Log;
 
 public class Notifications
 {
-	private Context context;
-
-	public Notifications(Context context)
-	{
-
-		this.context = context;
-	}
-
 	public static NotificationCompat.Builder GetNotificationBuilder(Context context, NotificationType type)
 	{
 		NotificationCompat.Builder noti = new NotificationCompat.Builder(context);

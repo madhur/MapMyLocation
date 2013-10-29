@@ -106,7 +106,6 @@ public class FriendPickerActivity extends ActionBarActivity
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		// TODO Auto-generated method stub
 
 		getMenuInflater().inflate(R.menu.fb_pickfriends, (android.view.Menu) menu);
 		return super.onCreateOptionsMenu(menu);
@@ -155,7 +154,6 @@ public class FriendPickerActivity extends ActionBarActivity
 		}
 		catch (JsonProcessingException e)
 		{
-			// TODO Auto-generated catch block
 			Log.e(App.TAG, e.getMessage());
 			
 			e.printStackTrace();

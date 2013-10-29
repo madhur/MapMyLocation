@@ -34,6 +34,7 @@ friends in your friend list will be able to see the posted location on your time
 * Access fine location - To capture your location
 * Access network state - Used to determine if application can post to facebook through network connection.
 * Run at Startup - Used to enable live track service after reboot
+* Prevent phone from sleeping - Used to wakeup phone so that LiveTrack can make a post to social network.
 
 
 ### Why the application requires Facebook permissions?

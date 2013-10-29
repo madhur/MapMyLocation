@@ -188,9 +188,6 @@ public class LiveTrackWakefulService extends WakefulIntentService
 					description=sbr.toString();
 				}
 				
-				
-				
-				
 				if(App.LOCAL_LOGV)
 				{
 					
@@ -379,17 +376,7 @@ public class LiveTrackWakefulService extends WakefulIntentService
 			@Override
 			public void onCompleted(Response response)
 			{
-				if (LOCAL_LOGV)
-					Log.v(App.TAG, response.toString());
-				
-				if(response.getError()!=null)
-				appLog.append("on request completed:"+ response.getError().getErrorMessage());
-				else
-					appLog.append("on request completed:"+ response.toString());	
-
 			}
-			
-			
 		});
 
 		Response fbResponse = myRequest.executeAndWait();
