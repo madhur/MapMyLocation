@@ -10,6 +10,7 @@ import com.facebook.model.GraphUser;
 import android.annotation.TargetApi;
 import android.app.Application;
 import android.os.Build;
+import com.crittercism.app.Crittercism;
 
 @ReportsCrashes(formKey = "", // This is required for backward compatibility but
 								// not used
@@ -33,7 +34,7 @@ public class App extends Application
 		// TODO Auto-generated method stub
 		super.onCreate();
 		if(!Build.PRODUCT.equals("sdk_x86"))
-			ACRA.init(this);
+			 Crittercism.initialize(getApplicationContext(), "526e3508e432f557fe000008");
 		
 	}
 	
