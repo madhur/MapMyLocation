@@ -59,7 +59,6 @@ public class LiveTrackService extends IntentService
 	@Override
 	public void onCreate()
 	{
-		// TODO Auto-generated method stub
 		super.onCreate();
 
 		appLog = new AppLog(DateFormat.getDateFormatOrder(this));
@@ -68,7 +67,6 @@ public class LiveTrackService extends IntentService
 	@Override
 	public void onDestroy()
 	{
-		// TODO Auto-generated method stub
 		super.onDestroy();
 		if (appLog != null)
 			appLog.close();
@@ -130,7 +128,7 @@ public class LiveTrackService extends IntentService
 			appLog.append("Failure: Retrieving location while posting");
 			if (showNotification)
 			{
-				new Notifications(this);
+//				new Notifications(this);
 				NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.LOCATION_FAILURE);
 				nm.notify(0, builder.build());
 			}

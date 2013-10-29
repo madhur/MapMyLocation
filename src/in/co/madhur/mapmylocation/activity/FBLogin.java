@@ -26,12 +26,10 @@ import static in.co.madhur.mapmylocation.App.TAG;
 public class FBLogin extends Activity
 {
 	private UiLifecycleHelper uiHelper;
-	private Session session;
-
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.facebook);
 		uiHelper = new UiLifecycleHelper(this, statusCallback);
