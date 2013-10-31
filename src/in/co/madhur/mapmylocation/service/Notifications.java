@@ -127,6 +127,10 @@ public class Notifications
 			
 			break;
 			
+		case SENDER_NOTIN_CONTACTS:
+			contentText=context.getString(R.string.noti_sender_notin_contacts);
+			noti.setTicker(sender+": "+context.getString(R.string.noti_sender_notin_contacts));		
+			
 		default:
 			break;
 		

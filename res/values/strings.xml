@@ -62,6 +62,8 @@
     <string name="noti_fb_session_failure">Your facebook session has expired. Please connect again in Settings</string>
     <string name="noti_fb_not_connected">Your Facebook account is not integrated. Please connect your Facebook account</string>
     
+    <string name="noti_sender_notin_contacts">Location request ignored. Sender not in the contacts</string>
+    
     <string name="location_error">Location not enabled</string>
 	<string name="location_error_desc">Enable access to your location in the \'Location Access\' settings of your phone. At least one of th etwo options (\'GPS Satellites\' and \'WIFI\' and mobile network location\') must be enabled</string>
  	<string name="app_log_empty">Log is empty. Enable it in \"Advanced settings\".</string>
@@ -71,6 +73,7 @@
  	  <string name="ui_dialog_disconnect_msg">Are you sure? You will need to reauthorize your account after disconnecting.</string>
  	  <string name="fb_needs_connecting">Tap to connect your Facebook account (required).</string>
  	  <string name="fb_already_connected">Connected</string>
+ 	  <string name="fb_already_connectedas">Connected as %s</string>
  	  <string name="exception">Exception: %1$s</string>
  	  
  	  <string name="action_addfriend">Add friend</string>
@@ -94,4 +97,5 @@
  	  
  	  <string name="pref_donate">Donate</string>
  	  <string name="pref_donate_desc">Donate securely using Paypal</string>
+ 	  <string name="fbGrantPermission">Grant Hermes permission to post</string>
 </resources>

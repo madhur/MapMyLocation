@@ -1,15 +1,20 @@
 package in.co.madhur.mapmylocation.sms;
 
 import in.co.madhur.mapmylocation.App;
+import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.preferences.Preferences;
+import in.co.madhur.mapmylocation.service.Notifications;
 import in.co.madhur.mapmylocation.service.SMSService;
+import in.co.madhur.mapmylocation.tasks.NotificationType;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.PhoneLookup;
+import android.support.v4.app.NotificationCompat.Builder;
 import android.util.Log;
+import android.widget.Toast;
 
 import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
 
@@ -28,7 +33,7 @@ public class SMSHandler
 		{
 			if(LOCAL_LOGV)
 				Log.v(App.TAG, "Track me not enabled, returning");
-			// Show notification of Track me not enabled
+			// Not a possible condition since reciver is disabled if track me is disabled
 			
 			return;
 		}
@@ -39,6 +44,7 @@ public class SMSHandler
 		{
 				if(LOCAL_LOGV)
 					Log.v(App.TAG, "Sender not in the contacts, returning");
+				Toast.makeText(context, context.getString(R.string.noti_sender_notin_contacts), Toast.LENGTH_SHORT).show();
 				return;
 			
 		}

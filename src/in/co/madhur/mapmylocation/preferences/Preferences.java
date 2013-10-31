@@ -199,6 +199,19 @@ public final class Preferences
 		return getStringAsInt(Keys.FB_INTERVAL.key, Defaults.FB_RATE);
 
 	}
+	
+	public String getFBUserName()
+	{
+		return sharedPreferences.getString(Keys.FB_USERNAME.key, "");
+		
+	}
+	
+	public void setFBUserName(String name)
+	{
+		SharedPreferences.Editor editor = sharedPreferences.edit();
+		editor.putString(Keys.FB_USERNAME.key, name);
+		editor.commit();
+	}
 
 	private int getStringAsInt(String key, int def)
 	{
@@ -293,6 +306,8 @@ public final class Preferences
 		sharedPreferences.registerOnSharedPreferenceChangeListener(listener);
 
 	}
+	
+	
 
 	public int getLocationTimeout()
 	{
