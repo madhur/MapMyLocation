@@ -15,7 +15,7 @@ public class App extends Application
 	public static final String TAG = "Hermes";
 	public static final String LOG = "mapmylocation.log";
 
-	public static final boolean DEBUG = BuildConfig.DEBUG;
+	public static final boolean DEBUG = false;
 	public static final boolean LOCAL_LOGV = DEBUG;
 
 	private Collection<GraphUser> selectedUsers;

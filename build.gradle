@@ -39,6 +39,7 @@ dependencies {
     compile files('libs/jackson-core-2.2.3.jar')
     compile files('libs/jackson-databind-2.2.3.jar')
     compile files('libs/acra-4.5.0.jar')
+    compile files('libs/crittercism_v4_2_0_sdkonly.jar')
     compile files('appcompat/libs/android-support-v7-appcompat.jar')
 }
 

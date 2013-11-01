@@ -45,8 +45,7 @@ import android.widget.Toast;
 
 import static in.co.madhur.mapmylocation.App.TAG;
 
-public class MainActivity extends PreferenceActivity implements
-		OnSharedPreferenceChangeListener
+public class MainActivity extends PreferenceActivity
 {
 	Preferences appPreferences;
 	private final int FB_REQUESTCODE = 1;
@@ -81,22 +80,14 @@ public class MainActivity extends PreferenceActivity implements
 		appPreferences.setListener(listener);
 
 		setupStrictMode();
-
 	}
 
 	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	private void setupStrictMode()
 	{
-		if (BuildConfig.DEBUG
+		if (App.DEBUG
 				&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyFlashScreen().build());
-
-	}
-
-	@Override
-	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
-	{
-		// TODO Auto-generated method stub
 
 	}
 
@@ -353,10 +344,14 @@ public class MainActivity extends PreferenceActivity implements
 		if (fbSession == null)
 			fbSession = Session.getActiveSession();
 
-		if (fbSession != null && fbSession.isOpened())
+		if (fbSession != null && fbSession.isOpened() && fbSession.getPermissions().contains("publish_actions"))
 		{
 			fbConnected.setChecked(true);
-			summary = getString(R.string.fb_already_connected);
+			if(appPreferences.getFBUserName().equals(""))
+				summary = getString(R.string.fb_already_connected);
+			else
+				summary=String.format(getString(R.string.fb_already_connectedas), appPreferences.getFBUserName());
+			
 		}
 		else
 		{
