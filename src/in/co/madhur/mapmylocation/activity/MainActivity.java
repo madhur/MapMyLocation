@@ -85,7 +85,7 @@ public class MainActivity extends PreferenceActivity
 	@TargetApi(Build.VERSION_CODES.GINGERBREAD)
 	private void setupStrictMode()
 	{
-		if (BuildConfig.DEBUG
+		if (App.DEBUG
 				&& Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
 			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectDiskReads().detectDiskWrites().detectNetwork().penaltyFlashScreen().build());
 

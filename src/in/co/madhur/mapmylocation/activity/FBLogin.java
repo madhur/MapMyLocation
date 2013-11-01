@@ -3,18 +3,13 @@ package in.co.madhur.mapmylocation.activity;
 import java.util.Arrays;
 import java.util.List;
 
-import in.co.madhur.mapmylocation.App;
 import in.co.madhur.mapmylocation.Consts;
 import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.preferences.Preferences;
 import android.app.Activity;
 import android.content.Intent;
-import android.net.NetworkInfo.State;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -30,8 +25,6 @@ import com.facebook.Session.StatusCallback;
 import com.facebook.model.GraphUser;
 import com.facebook.widget.LoginButton;
 
-import static in.co.madhur.mapmylocation.App.LOG;
-import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
 import static in.co.madhur.mapmylocation.App.TAG;
 
 public class FBLogin extends Activity
@@ -169,14 +162,6 @@ public class FBLogin extends Activity
 		
 		UpdateSessionScreen();
 
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu)
-	{
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
 	}
 
 	@Override

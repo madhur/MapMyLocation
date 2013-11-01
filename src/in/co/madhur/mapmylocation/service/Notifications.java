@@ -1,6 +1,5 @@
 package in.co.madhur.mapmylocation.service;
 
-import in.co.madhur.mapmylocation.App;
 import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.activity.ToastActivity;
 import in.co.madhur.mapmylocation.tasks.NotificationType;
@@ -9,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 
 public class Notifications
 {
@@ -64,8 +62,7 @@ public class Notifications
 		toastIntent.putExtra("message", contentText);
 		toastIntent.setClass(context, ToastActivity.class);
 
-		PendingIntent pi= PendingIntent.getActivity(context, 0, toastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-		Log.v(App.TAG, pi.toString());
+		PendingIntent pi = PendingIntent.getActivity(context, 0, toastIntent, PendingIntent.FLAG_ONE_SHOT);
 		return pi;
 
 	}
@@ -76,7 +73,8 @@ public class Notifications
 		noti.setContentTitle(context.getString(R.string.app_name));
 		noti.setAutoCancel(true);
 		noti.setContentText(errorMessage);
-		noti.setTicker(context.getString(R.string.app_name) +": "+ errorMessage);
+		noti.setTicker(context.getString(R.string.app_name) + ": "
+				+ errorMessage);
 		noti.setSmallIcon(R.drawable.ic_notification);
 		noti.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
 
@@ -84,14 +82,14 @@ public class Notifications
 
 		return noti;
 	}
-	
-	public static NotificationCompat.Builder GetNotificationBuilder(Context context, String sender , String errorMessage)
+
+	public static NotificationCompat.Builder GetNotificationBuilder(Context context, String sender, String errorMessage)
 	{
 		NotificationCompat.Builder noti = new NotificationCompat.Builder(context);
 		noti.setContentTitle(sender);
 		noti.setAutoCancel(true);
 		noti.setContentText(errorMessage);
-		noti.setTicker(sender +": "+ errorMessage);
+		noti.setTicker(sender + ": " + errorMessage);
 		noti.setSmallIcon(R.drawable.ic_notification);
 		noti.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
 
@@ -99,52 +97,56 @@ public class Notifications
 
 		return noti;
 	}
-	
+
 	public static NotificationCompat.Builder GetNotificationBuilderSMS(Context context, String sender, NotificationType type)
 	{
-		NotificationCompat.Builder noti=new NotificationCompat.Builder(context);
+		NotificationCompat.Builder noti = new NotificationCompat.Builder(context);
 		noti.setContentTitle(sender);
 		noti.setAutoCancel(true);
 		String contentText = null;
-		
-		switch(type)
+
+		switch (type)
 		{
-		case INCOMING_SMS:
-			contentText=context.getString(R.string.noti_loc_request);
-			noti.setTicker(sender+": "+context.getString(R.string.noti_loc_request));		
-			
-			break;
-			
-		case OUTGOING_SMS:
-			contentText=context.getString(R.string.noti_loc_response);
-			noti.setTicker(sender+": "+context.getString(R.string.noti_loc_response));		
-			
-			break;
-			
-		case  LOCATION_FAILURE:
-			contentText=context.getString(R.string.noti_loc_failure);
-			noti.setTicker(sender+": "+context.getString(R.string.noti_loc_failure));		
-			
-			break;
-			
-		case SENDER_NOTIN_CONTACTS:
-			contentText=context.getString(R.string.noti_sender_notin_contacts);
-			noti.setTicker(sender+": "+context.getString(R.string.noti_sender_notin_contacts));		
-			
-		default:
-			break;
-		
+			case INCOMING_SMS:
+				contentText = context.getString(R.string.noti_loc_request);
+				noti.setTicker(sender + ": "
+						+ context.getString(R.string.noti_loc_request));
+
+				break;
+
+			case OUTGOING_SMS:
+				contentText = context.getString(R.string.noti_loc_response);
+				noti.setTicker(sender + ": "
+						+ context.getString(R.string.noti_loc_response));
+
+				break;
+
+			case LOCATION_FAILURE:
+				contentText = context.getString(R.string.noti_loc_failure);
+				noti.setTicker(sender + ": "
+						+ context.getString(R.string.noti_loc_failure));
+
+				break;
+
+			case SENDER_NOTIN_CONTACTS:
+				contentText = context.getString(R.string.noti_sender_notin_contacts);
+				noti.setTicker(sender
+						+ ": "
+						+ context.getString(R.string.noti_sender_notin_contacts));
+
+			default:
+				break;
+
 		}
-		
+
 		noti.setContentText(contentText);
 		noti.setSmallIcon(R.drawable.ic_notification);
-				
+
 		noti.setLargeIcon(BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher));
-		
+
 		noti.setContentIntent(GetPendingIntent(context, contentText));
-		
+
 		return noti;
 	}
-	
 
 }

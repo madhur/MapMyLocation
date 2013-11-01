@@ -272,7 +272,7 @@ public class LiveTrackWakefulService extends WakefulIntentService
 			{
 				appLog.append("Error while posting to Facebook:"
 						+ fbResponse.getError().getErrorMessage());
-				appLog.append("fbUrl:"+ fbUrl + "name:" +name + "caption:" + caption +"Description: " + description + "fbprivacy:" + fbPrivacy.toString());
+				appLog.append("fbUrl:"+ fbUrl + "name:" +name + "caption:" + caption +"Description: " + description + "fbprivacy:" + privacyOptions.toString());
 				if (showNotification) 
 				{
 					NotificationCompat.Builder builder = Notifications.GetNotificationBuilder(this, NotificationType.FB_FAILURE);
