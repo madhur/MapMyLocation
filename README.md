@@ -1,8 +1,8 @@
 <div style=";text-align:center">
-<a  href="https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes1.png" title="Hermes"><img  src='https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes1.png' style="height:284px; width:160px" /></a>
-<a  href="https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes2.png" title="Hermes"><img  src='https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes2.png' style="height:284px; width:160px" /></a>
-<a  href="https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes3.png" title="Hermes"><img  src='https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes3.png' style="height:284px; width:160px" /></a>
-<a  href="https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes4.png" title="Hermes"><img  src='https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes4.png' style="height:284px; width:160px" /></a>
+<a  href="https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes1.png" title="Hermes"><img  src='https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes1.png' height=284px width=160px style="height:284px; width:160px" /></a>
+<a  href="https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes2.png" title="Hermes"><img  src='https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes2.png' height=284px width=160px style="height:284px; width:160px" /></a>
+<a  href="https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes3.png" title="Hermes"><img  src='https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes3.png' height=284px width=160px style="height:284px; width:160px" /></a>
+<a  href="https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes4.png" title="Hermes"><img  src='https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes4.png' height=284px width=160px style="height:284px; width:160px" /></a>
 </div>  
 
 
