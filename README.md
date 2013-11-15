@@ -1,10 +1,18 @@
+<div style=";text-align:center">
+<a  href="https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes1.png" title="Hermes"><img  src='https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes1.png' style="height:284px; width:160px" /></a>
+<a  href="https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes2.png" title="Hermes"><img  src='https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes2.png' style="height:284px; width:160px" /></a>
+<a  href="https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes3.png" title="Hermes"><img  src='https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes3.png' style="height:284px; width:160px" /></a>
+<a  href="https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes4.png" title="Hermes"><img  src='https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes4.png' style="height:284px; width:160px" /></a>
+</div>  
+
+
 ##Hermes (a.k.a Map My Location)
 
 Hermes is an attempt to provide a sense of security to all the travelers of all over the world and especially the women who use the public transport to commute to their work place and back home.
 
 Hermes is an application that lets a commuter be tracked while on the road, posting the whereabouts at regular intervals on popular social network. The posts are secured and are visible to only those whom the commuter has provided permissions to view. It also enables your friends and family to know your whereabouts by sending you a SMS containing a secret code.
 
-Hermes is available for free in the Google Play Store, there will never be a pro / paid version.
+Hermes is available for free in the [Google Play Store](https://play.google.com/store/apps/details?id=in.co.madhur.mapmylocation), there will never be a pro / paid version.
 
 But if you find the app useful and want to support the development of it you can make a donation through [paypal](http://www.madhur.co.in/donate/)
 
@@ -79,9 +87,4 @@ Check [github issues](https://github.com/madhur/MapMyLocation/issues?state=open)
 
   * Anjali Chopra - Testing on various devices
   
-##<a name="screenhots">Screenshots</a>
-
-![Hermes screenshot1](https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes1.png) 
-![Hermes screenshot2](https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes2.png) 
-![Hermes screenshot3](https://raw.github.com/madhur/MapMyLocation/gh-pages/screenshots/apphermes3.png) 
   
