@@ -13,7 +13,6 @@ import android.util.Log;
 
 import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
 
-
 public class SMSService extends WakefulIntentService
 {
 	public SMSService(String name)
@@ -21,6 +20,10 @@ public class SMSService extends WakefulIntentService
 		super(name);
 	}
 
+	public SMSService()
+	{
+		super("SMSService");
+	}
 
 	private AppLog appLog;
 
@@ -28,29 +31,27 @@ public class SMSService extends WakefulIntentService
 	public void onCreate()
 	{
 		super.onCreate();
-		
-		appLog=new AppLog(DateFormat.getDateFormatOrder(this));
+
+		appLog = new AppLog(DateFormat.getDateFormatOrder(this));
 	}
-	
+
 	@Override
 	public void onDestroy()
 	{
 		super.onDestroy();
-		
-		if(LOCAL_LOGV)
+
+		if (LOCAL_LOGV)
 			Log.v(App.TAG, "Service destroyed");
-		
-		if(appLog!=null)
+
+		if (appLog != null)
 			appLog.close();
 	}
-	
-	
+
 	@Override
 	public IBinder onBind(Intent intent)
 	{
 		return null;
 	}
-
 
 	@Override
 	protected void doWakefulWork(Intent intent)
@@ -70,16 +71,13 @@ public class SMSService extends WakefulIntentService
 		{
 			uniqueId = msgStamp.hashCode();
 		}
-		
-		if(LOCAL_LOGV)
+
+		if (LOCAL_LOGV)
 			Log.v(App.TAG, "Executing location task");
 		appLog.append("Starting task to get location");
-		
-		
-		new LocationTask(this, showNotification, sender, dispSender, uniqueId, appLog, new Preferences(this))
-				.execute(startId);
 
-		
+		new LocationTask(this, showNotification, sender, dispSender, uniqueId, appLog, new Preferences(this)).execute();
+
 	}
 
 }

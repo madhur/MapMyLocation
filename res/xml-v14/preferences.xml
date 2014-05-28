@@ -29,19 +29,7 @@
                 android:title="@string/pref_onlyallowcontacts" >
             </CheckBoxPreference>
 
-<!--             <Preference -->
-<!--                 android:key="pref_selectcontacts" -->
-<!--                 android:summary="@string/pref_selectcontacts_desc" -->
-<!--                 android:title="@string/pref_selectcontacts" /> -->
 
-            <!-- <ListPreference
-                android:defaultValue="300"
-                android:entries="@array/pref_max_rate"
-                android:entryValues="@array/pref_max_rate_values"
-                android:key="pref_max_rate"
-                android:summary="@string/pref_max_rate_desc"
-                android:title="@string/pref_max_rate" >
-            </ListPreference>-->
 
             <CheckBoxPreference
                 android:defaultValue="true"
@@ -102,12 +90,7 @@
             android:key="pref_shareloc"
             android:summary="@string/pref_shareloc_desc"
             android:title="@string/pref_shareloc" />
-        
-         <Preference
-            android:key="pref_donate"
-            android:summary="@string/pref_donate_desc"
-            android:title="@string/pref_donate" >
-        </Preference>
+       
         
          <Preference
             android:key="pref_about"

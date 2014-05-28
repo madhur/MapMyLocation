@@ -122,14 +122,12 @@ public class MainActivity extends PreferenceActivity
 				return super.onMenuItemSelected(featureId, item);
 
 		}
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected void onResume()
 	{
-		// TODO Auto-generated method stub
 		super.onResume();
 
 		// Connect preference listeners
@@ -425,27 +423,6 @@ public class MainActivity extends PreferenceActivity
 
 	}
 
-	// private void UpdateMaxRateLabel(String rate )
-	// {
-	// ListPreference MaxRateInterval=(ListPreference)
-	// findPreference(Preferences.Keys.MAX_RATE.key);
-	// if(rate==null)
-	// {
-	// MaxRateInterval.setTitle(MaxRateInterval.getEntry());
-	//
-	// }
-	// else
-	// {
-	// int index=MaxRateInterval.findIndexOfValue(rate);
-	// if(index!=-1)
-	// {
-	// rate=(String) MaxRateInterval.getEntries()[index];
-	// MaxRateInterval.setTitle(rate);
-	// }
-	// }
-	//
-	// }
-
 	private void SetListeners()
 	{
 
@@ -481,16 +458,7 @@ public class MainActivity extends PreferenceActivity
 			}
 		});
 
-		/*
-		 * findPreference(Preferences.Keys.MAX_RATE.key).
-		 * setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
-		 * 
-		 * @Override public boolean onPreferenceChange(Preference preference,
-		 * Object newValue) {
-		 * 
-		 * UpdateMaxRateLabel(newValue.toString()); return true; } });
-		 */
-
+		
 		findPreference(Preferences.Keys.FB_FRIENDS.key).setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 		{
 
@@ -521,14 +489,6 @@ public class MainActivity extends PreferenceActivity
 			}
 		});
 
-		/*
-		 * findPreference(Preferences.Keys.SELECT_FB_FRIENDS.key).
-		 * setOnPreferenceClickListener(new OnPreferenceClickListener() {
-		 * 
-		 * @Override public boolean onPreferenceClick(Preference preference) {
-		 * startActivityForResult(new Intent(MainActivity.this,
-		 * FriendPickerActivity.class), FB_SELCTFRIENDS); return true; } });
-		 */
 
 		findPreference(Preferences.Keys.ENABLE_TRACKME.key).setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 		{
@@ -546,7 +506,6 @@ public class MainActivity extends PreferenceActivity
 
 		findPreference(Preferences.Keys.ENABLE_LIVETRACK.key).setOnPreferenceChangeListener(new OnPreferenceChangeListener()
 		{
-			Preference settingsLivetrack = findPreference(Preferences.Keys.SETTINGS_LIVETRACK.key);
 
 			@Override
 			public boolean onPreferenceChange(Preference preference, Object newValue)
@@ -591,22 +550,6 @@ public class MainActivity extends PreferenceActivity
 			}
 		});
 		
-		findPreference(Preferences.Keys.PREF_DONATE.key).setOnPreferenceClickListener(new OnPreferenceClickListener()
-		{
-
-			@Override
-			public boolean onPreferenceClick(Preference preference)
-			{
-				Intent i=new Intent();
-				i.setAction(Intent.ACTION_VIEW);
-				i.setData(Uri.parse(Consts.DONATE_URL));
-				startActivity(i);
-				
-				return true;
-
-			}
-		});
-
 		findPreference(Preferences.Keys.PREF_SHARE_LOC.key).setOnPreferenceClickListener(new OnPreferenceClickListener()
 		{
 

@@ -10,12 +10,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import in.co.madhur.mapmylocation.App;
@@ -36,7 +38,6 @@ public final class Preferences
 		SECRET_CODE("pref_setsecretcode"),
 		ALLOW_CONTACTS("pref_onlyallowcontacts"),
 		SELECT_CONTACTS("pref_selectcontacts"),
-		// MAX_RATE("pref_max_rate"),
 		ENABLE_LIVETRACK("pref_enable_livetrack"),
 		CONNECT_FB("pref_connectfb"),
 		FB_INTERVAL("pref_fbinterval"),
@@ -46,8 +47,6 @@ public final class Preferences
 		FAQ("pref_faq"),
 		SHOW_TRACKME_NOTIFICATION("pref_trackme_shownotification"),
 		SHOW_LIVETRACK_NOTIFICATION("pref_livetrack_shownotification"),
-		// FB_ACCESS_TOKEN("fb_access_token"),
-		// FB_ACCESS_EXPIRES("fb_access_expires"),
 		FB_FRIENDS("pref_selectfbfriends"),
 		SETTINGS_TRACKME("pref_settings_trackme"),
 		SETTINGS_LIVETRACK("pref_settings_livetrack"),
@@ -76,13 +75,11 @@ public final class Preferences
 	{
 		this.context = context;
 		this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-		// sharedPreferences.registerOnSharedPreferenceChangeListener(this);
 	}
 
 	public void setCustomFriends(HashMap<String, String> friendsObject)
 			throws JsonProcessingException
 	{
-		// JSONObject jsonObject=new JSONObject(friendsObject);
 		ObjectMapper mapper = new ObjectMapper();
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -95,16 +92,13 @@ public final class Preferences
 	{
 		String latitude = sharedPreferences.getString(Keys.LAST_LATITUDE.key, "");
 		String longitude = sharedPreferences.getString(Keys.LAST_LONGITUDE.key, "");
-//		String timestamp = sharedPreferences.getString(Keys.LAST_LOCATION_TIME.key, "");
 
 		double dlat, dlong;
-//		Date dtime = null;
 
 		try
 		{
 			dlat = Double.parseDouble(latitude);
 			dlong = Double.parseDouble(longitude);
-//			Date.parse(timestamp);
 		}
 		catch (NumberFormatException e)
 		{
@@ -121,7 +115,6 @@ public final class Preferences
 		SharedPreferences.Editor editor = sharedPreferences.edit();
 		editor.putString(Keys.LAST_LATITUDE.key, String.valueOf(result.getLatitude()));
 		editor.putString(Keys.LAST_LONGITUDE.key, String.valueOf(result.getLongitude()));
-//		editor.putString(Keys.LAST_LOCATION_TIME.key, result.getTimeStamp());
 		editor.commit();
 
 	}
@@ -173,13 +166,6 @@ public final class Preferences
 		return sharedPreferences.getBoolean(Keys.CONNECT_FB.key, false);
 
 	}
-
-	// public int getMaxRate()
-	// {
-	// return getStringAsInt(Keys.MAX_RATE.key, Defaults.MAX_SMS_RATE);
-	//
-	//
-	// }
 
 	public String getFBFriends()
 	{
@@ -240,32 +226,7 @@ public final class Preferences
 
 	}
 
-	/*
-	 * public void clearFBData() { SharedPreferences.Editor
-	 * editor=sharedPreferences.edit();
-	 * editor.putString(Keys.FB_ACCESS_TOKEN.key, "");
-	 * editor.putString(Keys.FB_ACCESS_EXPIRES.key, "");
-	 * editor.putString(Keys.FB_USERNAME.key, ""); editor.commit(); }
-	 * 
-	 * public void setFBTokenData(String access_token, String access_expires,
-	 * String username) { SharedPreferences.Editor
-	 * editor=sharedPreferences.edit();
-	 * editor.putString(Keys.FB_ACCESS_TOKEN.key, access_token);
-	 * editor.putString(Keys.FB_ACCESS_EXPIRES.key, access_expires);
-	 * editor.putString(Keys.FB_USERNAME.key, username); editor.commit(); }
-	 * 
-	 * public String getFBAccessToken() {
-	 * 
-	 * return sharedPreferences.getString(Keys.FB_ACCESS_TOKEN.key,""); }
-	 * 
-	 * 
-	 * public String getFBAccessExpires() { return
-	 * sharedPreferences.getString(Keys.FB_ACCESS_EXPIRES.key, ""); }
-	 * 
-	 * public String getFBUserName() { // TODO Auto-generated method stub return
-	 * sharedPreferences.getString(Keys.FB_ACCESS_EXPIRES.key, ""); }
-	 */
-
+	@TargetApi(Build.VERSION_CODES.JELLY_BEAN)
 	public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
 	{
 
