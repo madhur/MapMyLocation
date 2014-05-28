@@ -1,12 +1,9 @@
 package in.co.madhur.mapmylocation.preferences;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 
 import org.json.JSONException;
-import org.json.JSONObject;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,16 +16,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener;
-import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import in.co.madhur.mapmylocation.App;
 import in.co.madhur.mapmylocation.Consts;
-import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.activity.FriendPickerActivity;
-import in.co.madhur.mapmylocation.activity.MainActivity;
 import in.co.madhur.mapmylocation.location.Coordinates;
-import in.co.madhur.mapmylocation.preferences.Preferences.Keys.*;
 
 public final class Preferences
 {

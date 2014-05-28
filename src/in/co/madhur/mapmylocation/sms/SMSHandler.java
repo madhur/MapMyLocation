@@ -3,16 +3,13 @@ package in.co.madhur.mapmylocation.sms;
 import in.co.madhur.mapmylocation.App;
 import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.preferences.Preferences;
-import in.co.madhur.mapmylocation.service.Notifications;
 import in.co.madhur.mapmylocation.service.SMSService;
-import in.co.madhur.mapmylocation.tasks.NotificationType;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.PhoneLookup;
-import android.support.v4.app.NotificationCompat.Builder;
 import android.util.Log;
 import android.widget.Toast;
 

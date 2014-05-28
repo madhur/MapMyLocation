@@ -1,7 +1,6 @@
 package in.co.madhur.mapmylocation.activity;
 
 import in.co.madhur.mapmylocation.App;
-import in.co.madhur.mapmylocation.BuildConfig;
 import in.co.madhur.mapmylocation.Consts;
 import in.co.madhur.mapmylocation.R;
 import in.co.madhur.mapmylocation.location.Coordinates;

@@ -14,8 +14,14 @@ import android.util.Log;
 import static in.co.madhur.mapmylocation.App.LOCAL_LOGV;
 
 
-public class SMSService extends Service
+public class SMSService extends WakefulIntentService
 {
+	public SMSService(String name)
+	{
+		super(name);
+	}
+
+
 	private AppLog appLog;
 
 	@Override
@@ -26,9 +32,28 @@ public class SMSService extends Service
 		appLog=new AppLog(DateFormat.getDateFormatOrder(this));
 	}
 	
+	@Override
+	public void onDestroy()
+	{
+		super.onDestroy();
+		
+		if(LOCAL_LOGV)
+			Log.v(App.TAG, "Service destroyed");
+		
+		if(appLog!=null)
+			appLog.close();
+	}
+	
 	
 	@Override
-	public int onStartCommand(Intent intent, int flags, int startId)
+	public IBinder onBind(Intent intent)
+	{
+		return null;
+	}
+
+
+	@Override
+	protected void doWakefulWork(Intent intent)
 	{
 		Bundle data = intent.getExtras();
 		boolean showNotification = data.getBoolean("showNotification");
@@ -54,34 +79,7 @@ public class SMSService extends Service
 		new LocationTask(this, showNotification, sender, dispSender, uniqueId, appLog, new Preferences(this))
 				.execute(startId);
 
-		return START_NOT_STICKY;
-	}
-	
-	@Override
-	public void onDestroy()
-	{
-		// TODO Auto-generated method stub
-		super.onDestroy();
 		
-		if(LOCAL_LOGV)
-			Log.v(App.TAG, "Service destroyed");
-		
-		if(appLog!=null)
-			appLog.close();
-	}
-	
-//	public void log(Context context, String message)
-//	{
-//		Log.d(TAG, message);
-//		new AppLog(DateFormat.getDateFormatOrder(context))
-//				.appendAndClose(message);
-//	}
-	
-	@Override
-	public IBinder onBind(Intent intent)
-	{
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
